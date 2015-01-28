@@ -1,0 +1,17 @@
+#Greenfoot properties
+#Wed Jan 28 08:05:17 PST 2015
+class.HazelShogun.image=muffin.png
+class.HazelShogun.superclass=Enemy
+class.JamFisher.image=grapes.png
+class.JamFisher.superclass=Enemy
+class.PaniniSumoPresser.image=pumpkin.png
+project.charset=UTF-8
+version=2.7.0
+class.Enemy.superclass=Character
+class.Player.superclass=Character
+class.ButterRonin.image=chips-1.png
+class.Character.superclass=greenfoot.Actor
+class.Player.image=bread.png
+class.ButterRonin.superclass=Enemy
+class.PaniniSumoPresser.superclass=Enemy
+class.Map1.superclass=greenfoot.World
