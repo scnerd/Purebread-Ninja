@@ -1,0 +1,21 @@
+#BlueJ class context
+comment0.params=
+comment0.target=void\ act()
+comment0.text=\r\n\ Act\ -\ do\ whatever\ the\ Platform\ wants\ to\ do.\ This\ method\ is\ called\ whenever\r\n\ the\ 'Act'\ or\ 'Run'\ button\ gets\ pressed\ in\ the\ environment.\r\n
+comment1.params=
+comment1.target=int\ left()
+comment2.params=
+comment2.target=int\ right()
+comment3.params=
+comment3.target=int\ top()
+comment4.params=
+comment4.target=int\ bottom()
+comment5.params=
+comment5.target=java.awt.Point\ cornerUL()
+comment6.params=
+comment6.target=java.awt.Point\ cornerUR()
+comment7.params=
+comment7.target=java.awt.Point\ cornerBL()
+comment8.params=
+comment8.target=java.awt.Point\ cornerBR()
+numComments=9
