@@ -2,6 +2,7 @@ import greenfoot.*;
 import java.util.List;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Write a description of class Player here.
@@ -16,11 +17,11 @@ public class Player extends Character
     Point2D.Double MAX_VELOCITY = new Point2D.Double(3, 6);
     private double ACC_GRAVITY = 0.25;
     private double ACC_MOVEMENT = 0.4;
-    private double ACC_FRICTION = 0.6;
-    private double ACC_JUMP = 4;
+    private double ACC_FRICTION = 0.4;
+    private double ACC_JUMP = 4.5;
     private double ACC_HOLD_JUMP = 0.1;
 
-    private int COLLISION_MARGIN = 1;
+    private int COLLISION_MARGIN = 2;
 
     /**
      * Act - do whatever the Player wants to do. This method is called whenever
@@ -34,6 +35,9 @@ public class Player extends Character
         }
         enactMovement();
     }
+    
+    private int sign(double n)
+    { return n < 0 ? -1 : 1; }
 
     private boolean keyboardLeft()
     { return Greenfoot.isKeyDown("a") || Greenfoot.isKeyDown("left"); }
@@ -44,13 +48,13 @@ public class Player extends Character
     private boolean keyboardUp()
     { return Greenfoot.isKeyDown("w") || Greenfoot.isKeyDown("up"); }
 
-    private ArrayList groundTiles()
+    private HashSet groundTiles()
     {
-        int leftX = 0-getImage().getWidth() / 2 + COLLISION_MARGIN;
-        int rightX = 0+getImage().getWidth() / 2 - COLLISION_MARGIN;
-        int down = getImage().getHeight() / 2 - COLLISION_MARGIN;
+        int leftX = -getImage().getWidth() / 2 + COLLISION_MARGIN;
+        int rightX = getImage().getWidth() / 2 - COLLISION_MARGIN;
+        int down = getImage().getHeight() / 2;
 
-        ArrayList toReturn = new ArrayList();
+        HashSet toReturn = new HashSet();
         toReturn.addAll(getObjectsAtOffset(leftX, down, Platform.class));
         toReturn.addAll(getObjectsAtOffset(rightX, down, Platform.class));
         return toReturn;
@@ -61,14 +65,14 @@ public class Player extends Character
         return groundTiles().size() > 0;
     }
 
-    private ArrayList wallTiles()
+    private HashSet wallTiles()
     {
-        int leftX = 0-getImage().getWidth() / 2 + COLLISION_MARGIN;
-        int rightX = 0+getImage().getWidth() / 2 - COLLISION_MARGIN;
+        int leftX = -getImage().getWidth() / 2 + COLLISION_MARGIN;
+        int rightX = getImage().getWidth() / 2 - COLLISION_MARGIN;
         int downY = getImage().getHeight() / 2 - COLLISION_MARGIN;
         int upY = -getImage().getHeight() / 2 + COLLISION_MARGIN;
 
-        ArrayList toReturn = new ArrayList();
+        HashSet toReturn = new HashSet();
         toReturn.addAll(getObjectsAtOffset(leftX, downY, Platform.class));
         toReturn.addAll(getObjectsAtOffset(rightX, downY, Platform.class));
         toReturn.addAll(getObjectsAtOffset(leftX, upY, Platform.class));
@@ -81,13 +85,13 @@ public class Player extends Character
         return wallTiles().size() > 0;
     }
 
-    private ArrayList ceilingTiles()
+    private HashSet ceilingTiles()
     {
-        int leftX = 0-getImage().getWidth() / 2 + COLLISION_MARGIN;
-        int rightX = 0+getImage().getWidth() / 2 - COLLISION_MARGIN;
-        int up = -getImage().getHeight() / 2 + COLLISION_MARGIN;
+        int leftX = -getImage().getWidth() / 2 + COLLISION_MARGIN;
+        int rightX = getImage().getWidth() / 2 - COLLISION_MARGIN;
+        int up = -getImage().getHeight() / 2;
 
-        ArrayList toReturn = new ArrayList();
+        HashSet toReturn = new HashSet();
         toReturn.addAll(getObjectsAtOffset(leftX, up, Platform.class));
         toReturn.addAll(getObjectsAtOffset(rightX, up, Platform.class));
         return toReturn;
@@ -127,17 +131,13 @@ public class Player extends Character
         else if(isOnGround())
         {
             // Get friction in the correct direction
-            acceleration.x += (velocity.x < 0 ? -1 : 1) * ACC_FRICTION;
+            acceleration.x += (velocity.x < 0 ? 1 : -1) * ACC_FRICTION;
             // Make sure the friction stops player rather than accelerating them backwards
-            acceleration.x = Math.min(-velocity.x, acceleration.x);
+            acceleration.x = (acceleration.x < 0 ? -1 : 1) * 
+            Math.min(Math.abs(velocity.x), Math.abs(acceleration.x));
         }
 
         // Calculate velocity
-        if(isOnGround())
-        { acceleration.y = Math.min(acceleration.y, 0); }
-        if(isOnCeiling())
-        { acceleration.y = Math.max(acceleration.y, 0); }
-
         velocity.x += acceleration.x;
         velocity.y += acceleration.y;
 
@@ -211,25 +211,31 @@ public class Player extends Character
       
         int front_tile = Map.pointToGrid(front, position.y).x;
         int forward_limit = direction < 0 ?
-        Math.min(-1, Map.pointToGrid(front + velocity, position.y).x - 1) : 
-        Math.max(Map.levelWidth, Map.pointToGrid(front + velocity, position.y).x + 1);
+        Math.max(-1, Map.pointToGrid(front + velocity, position.y).x - 1) : 
+        Math.min(Map.levelWidth, Map.pointToGrid(front + velocity, position.y).x + 1);
         
-        int top_tile = Map.pointToGrid(front, position.y - getImage().getHeight() / 2).y;
-        int bottom_tile = Map.pointToGrid(front, position.y + getImage().getHeight() / 2).y;
+        int top_tile = Map.pointToGrid(front, position.y + COLLISION_MARGIN - getImage().getHeight() / 2).y;
+        int bottom_tile = Map.pointToGrid(front, position.y - COLLISION_MARGIN + getImage().getHeight() / 2).y;
         
         Platform collide = null;
         
         for(int tile_y = top_tile; tile_y <= bottom_tile; tile_y++)
         {
-            for(int tile_x = front_tile; tile_x != forward_limit; tile_x += direction)
+            for(int tile_x = front_tile; tile_x != forward_limit
+            && sign(forward_limit - tile_x) == direction; tile_x += direction)
             {
                 java.awt.Point loc = Map.gridToCenter(tile_x, tile_y);
                 if((collide = 
-                (Platform)getOneObjectAtOffset((int)(loc.x - front), (int)(loc.y - position.y), Platform.class))
+                (Platform)getOneObjectAtOffset((int)(loc.x - position.x), (int)(loc.y - position.y), Platform.class))
                 != null)
                 {
                     int nearest_edge = direction < 0 ? collide.right() : collide.left();
-                    velocity = direction * Math.min(Math.abs(velocity), Math.abs(nearest_edge - front));
+                    double correction = nearest_edge - front;
+                    int correction_direction = correction < 0 ? -1 : 1;
+                    if(correction_direction != direction)
+                        velocity = correction;
+                    else
+                        velocity = direction * Math.min(Math.abs(velocity), Math.abs(correction));
                     break;
                 }
             }
@@ -247,22 +253,28 @@ public class Player extends Character
         Math.max(-1, Map.pointToGrid(position.x, front + velocity).y - 1) : 
         Math.min(Map.levelHeight, Map.pointToGrid(position.x, front + velocity).y + 1);
         
-        int left_tile = Map.pointToGrid(position.x - getImage().getWidth() / 2, front).x;
-        int right_tile = Map.pointToGrid(position.x + getImage().getWidth() / 2, front).x;
+        int left_tile = Map.pointToGrid(position.x + COLLISION_MARGIN - getImage().getWidth() / 2, front).x;
+        int right_tile = Map.pointToGrid(position.x - COLLISION_MARGIN + getImage().getWidth() / 2, front).x;
         
         Platform collide = null;
         
         for(int tile_x = left_tile; tile_x <= right_tile; tile_x++)
         {
-            for(int tile_y = front_tile; tile_y != forward_limit; tile_y += direction)
+            for(int tile_y = front_tile; tile_y != forward_limit && 
+            sign(forward_limit - tile_y) == direction; tile_y += direction)
             {
                 java.awt.Point loc = Map.gridToCenter(tile_x, tile_y);
                 if((collide = 
-                (Platform)getOneObjectAtOffset((int)(loc.x - position.x), (int)(loc.y - front), Platform.class))
+                (Platform)getOneObjectAtOffset((int)(loc.x - position.x), (int)(loc.y - position.y), Platform.class))
                 != null)
                 {
                     int nearest_edge = direction < 0 ? collide.bottom() : collide.top();
-                    velocity = direction * Math.min(Math.abs(velocity), Math.abs(nearest_edge - front));
+                    double correction = nearest_edge - front;
+                    int correction_direction = correction < 0 ? -1 : 1;
+                    if(correction_direction != direction)
+                        continue; // Different from X, which moves to correct
+                    else
+                        velocity = direction * Math.min(Math.abs(velocity), Math.abs(correction));
                     break;
                 }
             }
