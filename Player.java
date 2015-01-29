@@ -12,16 +12,21 @@ import java.util.HashSet;
  */
 public class Player extends Character
 {
-    Point2D.Double position = null;
-    Point2D.Double velocity = new Point2D.Double(0, 0);
+    private boolean usedUp = false;
+    
     Point2D.Double MAX_VELOCITY = new Point2D.Double(3, 6);
+    
     private double ACC_GRAVITY = 0.25;
-    private double ACC_MOVEMENT = 0.4;
+    private double ACC_GROUND_JUMP = 4.5;
+    
+    private double ACC_MOVEMENT_GROUND = 0.4;
+    private double ACC_MOVEMENT_AIR = 0.2;
     private double ACC_FRICTION = 0.4;
-    private double ACC_JUMP = 4.5;
-    private double ACC_HOLD_JUMP = 0.1;
-
-    private int COLLISION_MARGIN = 2;
+    
+    private double ACC_WALL_HOLD = 0.2;
+    private double ACC_WALL_JUMP = 4.5;
+    private double ACC_WALL_JUMP_HORZ = 2;
+    private double SLOWEST_SLIDE = 1;
 
     /**
      * Act - do whatever the Player wants to do. This method is called whenever
@@ -35,9 +40,6 @@ public class Player extends Character
         }
         enactMovement();
     }
-    
-    private int sign(double n)
-    { return n < 0 ? -1 : 1; }
 
     private boolean keyboardLeft()
     { return Greenfoot.isKeyDown("a") || Greenfoot.isKeyDown("left"); }
@@ -64,25 +66,52 @@ public class Player extends Character
     {
         return groundTiles().size() > 0;
     }
-
-    private HashSet wallTiles()
+    
+    private HashSet rightWallTiles()
     {
-        int leftX = -getImage().getWidth() / 2 + COLLISION_MARGIN;
-        int rightX = getImage().getWidth() / 2 - COLLISION_MARGIN;
+        int rightX = getImage().getWidth() / 2;
+        int downY = getImage().getHeight() / 2 - COLLISION_MARGIN;
+        int upY = -getImage().getHeight() / 2 + COLLISION_MARGIN;
+
+        HashSet toReturn = new HashSet();
+        toReturn.addAll(getObjectsAtOffset(rightX, downY, Platform.class));
+        toReturn.addAll(getObjectsAtOffset(rightX, upY, Platform.class));
+        return toReturn;
+    }
+    
+    private HashSet leftWallTiles()
+    {
+        int leftX = -getImage().getWidth() / 2 - 1;
         int downY = getImage().getHeight() / 2 - COLLISION_MARGIN;
         int upY = -getImage().getHeight() / 2 + COLLISION_MARGIN;
 
         HashSet toReturn = new HashSet();
         toReturn.addAll(getObjectsAtOffset(leftX, downY, Platform.class));
-        toReturn.addAll(getObjectsAtOffset(rightX, downY, Platform.class));
         toReturn.addAll(getObjectsAtOffset(leftX, upY, Platform.class));
-        toReturn.addAll(getObjectsAtOffset(rightX, upY, Platform.class));
+        return toReturn;
+    }
+
+    private HashSet wallTiles()
+    {
+        HashSet toReturn = new HashSet();
+        toReturn.addAll(leftWallTiles());
+        toReturn.addAll(rightWallTiles());
         return toReturn;
     }
 
     private boolean isOnWall()
     {
         return wallTiles().size() > 0;
+    }
+    
+    private boolean isOnLeftWall()
+    {
+        return leftWallTiles().size() > 0;
+    }
+    
+    private boolean isOnRightWall()
+    {
+        return rightWallTiles().size() > 0;
     }
 
     private HashSet ceilingTiles()
@@ -109,24 +138,39 @@ public class Player extends Character
         // - Gravity
         acceleration.y += ACC_GRAVITY;
 
-        // - Jumping
-        if(keyboardUp())
-        {
-            if(isOnGround())
-            { acceleration.y = -ACC_JUMP; }
-            else
-            { acceleration.y -= ACC_HOLD_JUMP; }
-        }
-
         // - Horizontal movement
         if(keyboardLeft() || keyboardRight()) 
         {
-            if(keyboardLeft() && keyboardRight())
-            { }
-            else if(keyboardLeft())
-            { acceleration.x -= ACC_MOVEMENT; }
-            else if(keyboardRight())
-            { acceleration.x += ACC_MOVEMENT; }
+            if(isOnGround())
+            {
+                if(keyboardLeft() && keyboardRight())
+                { }
+                else if(keyboardLeft())
+                { acceleration.x -= ACC_MOVEMENT_GROUND; }
+                else if(keyboardRight())
+                { acceleration.x += ACC_MOVEMENT_GROUND; }
+            }
+            else if(isOnWall())
+            {
+                if(keyboardLeft() && keyboardRight())
+                { }
+                else if((keyboardLeft() && isOnLeftWall()) || (keyboardRight() && isOnRightWall()))
+                { 
+                    if(velocity.y < SLOWEST_SLIDE)
+                        acceleration.y = Math.min(acceleration.y, SLOWEST_SLIDE - velocity.y);
+                    else
+                        acceleration.y = -Math.min(velocity.y - SLOWEST_SLIDE, ACC_WALL_HOLD);
+                }
+            }
+            else
+            {
+                if(keyboardLeft() && keyboardRight())
+                { }
+                else if(keyboardLeft())
+                { acceleration.x -= ACC_MOVEMENT_AIR; }
+                else if(keyboardRight())
+                { acceleration.x += ACC_MOVEMENT_AIR; }
+            }
         }
         else if(isOnGround())
         {
@@ -137,6 +181,34 @@ public class Player extends Character
             Math.min(Math.abs(velocity.x), Math.abs(acceleration.x));
         }
 
+        // - Jumping
+        if(keyboardUp() && !usedUp)
+        {
+            if(isOnGround())
+            { acceleration.y = -ACC_GROUND_JUMP; }
+            else if(isOnWall())
+            {
+                int jump_dir = 0;
+                if(isOnLeftWall() && keyboardLeft())
+                {
+                    jump_dir = 1;
+                }
+                else if(isOnRightWall() && keyboardRight())
+                {
+                    jump_dir = -1;
+                }
+                if(jump_dir != 0)
+                {
+                    acceleration = new Point2D.Double(jump_dir * ACC_WALL_JUMP_HORZ, -ACC_WALL_JUMP - velocity.y);
+                }
+            }
+            usedUp = true;
+        }
+        else if(!keyboardUp())
+        {
+            usedUp = false;
+        }
+
         // Calculate velocity
         velocity.x += acceleration.x;
         velocity.y += acceleration.y;
@@ -144,56 +216,6 @@ public class Player extends Character
         // Tweak to avoid superimposition
         velocity.x = stepX(velocity.x);
         velocity.y = stepY(velocity.y);
-        /*
-        ArrayList collided = new ArrayList();
-        boolean needToCheck = true;
-        while(needToCheck)
-        {
-        Platform toAvoid;
-        int left = (int)(velocity.x - getImage().getWidth() / 2);
-        int right = (int)(velocity.x + getImage().getWidth() / 2);
-        int top = (int)(velocity.y - getImage().getHeight() / 2);
-        int bottom = (int)(velocity.y + getImage().getHeight() / 2);
-        int shiftX = 0;
-        int shiftY = 0;
-
-        if((toAvoid = (Platform)getOneObjectAtOffset(right, bottom, Platform.class)) != null
-        && !collided.contains(toAvoid))
-        {
-        collided.add(toAvoid);
-        shiftX = toAvoid.left() - (right + getX());
-        shiftY = toAvoid.top() - (bottom + getY());
-        }
-        else if((toAvoid = (Platform)getOneObjectAtOffset(left, bottom, Platform.class)) != null
-        && !collided.contains(toAvoid))
-        {
-        collided.add(toAvoid);
-        shiftX = (left + getX()) - toAvoid.right();
-        shiftY = toAvoid.top() - (bottom + getY());
-        }
-        else if((toAvoid = (Platform)getOneObjectAtOffset(right, top, Platform.class)) != null
-        && !collided.contains(toAvoid))
-        {
-        collided.add(toAvoid);
-        shiftX = toAvoid.left() - (right + getX());
-        shiftY = (top + getY()) - toAvoid.bottom();
-        }
-        else if((toAvoid = (Platform)getOneObjectAtOffset(left, top, Platform.class)) != null
-        && !collided.contains(toAvoid))
-        {
-        collided.add(toAvoid);
-        shiftX = (left + getX()) - toAvoid.right();
-        shiftY = (top + getY()) - toAvoid.bottom();
-        }
-        else
-        { needToCheck = false; break; }
-        //Greenfoot.ask(String.format("%d, %d", shiftX, shiftY));
-        if(Math.abs(shiftX) < Math.abs(shiftY))
-        { velocity.x = shiftX; }
-        else
-        { velocity.y = shiftY; }
-        }
-         */
 
         // Apply Velocity
         velocity.x = (velocity.x < 0 ? -1 : 1) * Math.min(Math.abs(velocity.x), MAX_VELOCITY.x);
@@ -202,83 +224,5 @@ public class Player extends Character
         position.y += velocity.y;
 
         setLocation((int)position.x, (int)position.y);
-    }
-
-    private double stepX(double velocity)
-    {
-        int direction = velocity < 0 ? -1 : 1;
-        double front = position.x + direction * getImage().getWidth() / 2;
-      
-        int front_tile = Map.pointToGrid(front, position.y).x;
-        int forward_limit = direction < 0 ?
-        Math.max(-1, Map.pointToGrid(front + velocity, position.y).x - 1) : 
-        Math.min(Map.levelWidth, Map.pointToGrid(front + velocity, position.y).x + 1);
-        
-        int top_tile = Map.pointToGrid(front, position.y + COLLISION_MARGIN - getImage().getHeight() / 2).y;
-        int bottom_tile = Map.pointToGrid(front, position.y - COLLISION_MARGIN + getImage().getHeight() / 2).y;
-        
-        Platform collide = null;
-        
-        for(int tile_y = top_tile; tile_y <= bottom_tile; tile_y++)
-        {
-            for(int tile_x = front_tile; tile_x != forward_limit
-            && sign(forward_limit - tile_x) == direction; tile_x += direction)
-            {
-                java.awt.Point loc = Map.gridToCenter(tile_x, tile_y);
-                if((collide = 
-                (Platform)getOneObjectAtOffset((int)(loc.x - position.x), (int)(loc.y - position.y), Platform.class))
-                != null)
-                {
-                    int nearest_edge = direction < 0 ? collide.right() : collide.left();
-                    double correction = nearest_edge - front;
-                    int correction_direction = correction < 0 ? -1 : 1;
-                    if(correction_direction != direction)
-                        velocity = correction;
-                    else
-                        velocity = direction * Math.min(Math.abs(velocity), Math.abs(correction));
-                    break;
-                }
-            }
-        }
-        return velocity;
-    }
-
-    private double stepY(double velocity)
-    {
-        int direction = velocity < 0 ? -1 : 1;
-        double front = position.y + direction * getImage().getHeight() / 2;
-        
-        int front_tile = Map.pointToGrid(position.x, front).y;
-        int forward_limit = direction < 0 ?
-        Math.max(-1, Map.pointToGrid(position.x, front + velocity).y - 1) : 
-        Math.min(Map.levelHeight, Map.pointToGrid(position.x, front + velocity).y + 1);
-        
-        int left_tile = Map.pointToGrid(position.x + COLLISION_MARGIN - getImage().getWidth() / 2, front).x;
-        int right_tile = Map.pointToGrid(position.x - COLLISION_MARGIN + getImage().getWidth() / 2, front).x;
-        
-        Platform collide = null;
-        
-        for(int tile_x = left_tile; tile_x <= right_tile; tile_x++)
-        {
-            for(int tile_y = front_tile; tile_y != forward_limit && 
-            sign(forward_limit - tile_y) == direction; tile_y += direction)
-            {
-                java.awt.Point loc = Map.gridToCenter(tile_x, tile_y);
-                if((collide = 
-                (Platform)getOneObjectAtOffset((int)(loc.x - position.x), (int)(loc.y - position.y), Platform.class))
-                != null)
-                {
-                    int nearest_edge = direction < 0 ? collide.bottom() : collide.top();
-                    double correction = nearest_edge - front;
-                    int correction_direction = correction < 0 ? -1 : 1;
-                    if(correction_direction != direction)
-                        continue; // Different from X, which moves to correct
-                    else
-                        velocity = direction * Math.min(Math.abs(velocity), Math.abs(correction));
-                    break;
-                }
-            }
-        }
-        return velocity;
     }
 }
