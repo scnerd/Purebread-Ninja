@@ -7,7 +7,7 @@ import java.awt.Point;
  * @author (your name) 
  * @version (a version number or a date)
  */
-public class Platform extends Actor
+public class Platform extends AnimatedActor
 {
     public Platform() {
         this.setImage("images/brick.jpg");

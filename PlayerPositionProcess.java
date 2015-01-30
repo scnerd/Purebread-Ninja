@@ -50,15 +50,37 @@ public class PlayerPositionProcess extends ActorProcess
     public void run() 
     {
         updatePosition();
+        
         if (player.velocity.x < 0 && lastVelocityX > 0)
         {
-            player.faceLeft();
             lastVelocityX = -1;
         }
         else if (player.velocity.x > 0 && lastVelocityX < 0)
         {
-            player.faceRight();
             lastVelocityX = 1;
+        }
+        
+        if (player.velocity.x != 0 && isOnGround())
+        {
+            player.setCurrentView(PlayerView.RUNNING);
+        }
+
+        else if (player.velocity.x == 0 && player.velocity.y == 0)
+        {
+            player.setCurrentView(PlayerView.STANDING);
+        }
+        else if (player.velocity.y != 0)
+        {
+            player.setCurrentView(PlayerView.JUMPING);
+        }
+        
+        if (lastVelocityX == -1)
+        {
+            player.faceLeft();
+        }
+        else
+        {
+            player.faceRight();
         }
     }
 

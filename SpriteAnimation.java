@@ -47,9 +47,12 @@ public class SpriteAnimation extends ActorProcess
 
     public void setAnimation(GreenfootImage[] frames, boolean repeat)
     {
-        this.frames = frames;
-        this.repeat = repeat;
-        this.restart();
+        if (frames != null && this.frames != frames)
+        {
+            this.frames = frames;
+            this.repeat = repeat;
+            this.restart();
+        }
     }
 
     @Override
