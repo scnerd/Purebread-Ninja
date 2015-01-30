@@ -82,7 +82,7 @@ public abstract class AnimatedActor extends Actor
     {
         if (map != null)
         {
-            super.setLocation( x - map.camX + map.getWidth()/2, map.camY + y - map.getHeight()/2);
+            super.setLocation( x - map.camX + map.getWidth()/2, y -  map.camY + map.getHeight()/2);
         }
         else
         {

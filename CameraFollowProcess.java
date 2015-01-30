@@ -12,9 +12,10 @@ public class CameraFollowProcess extends ActorProcess
     {
         this.map = map;
     }
+    
     public void run()
     {
-        map.setCameraLocation(this.owner.getX()-4, -1*(this.owner.getY()) + 600);
+        map.setCameraLocation(this.owner.getX(), this.owner.getY());
     }
         
 }
