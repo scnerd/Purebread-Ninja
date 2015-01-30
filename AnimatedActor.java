@@ -13,6 +13,32 @@ import java.util.Arrays;
  */
 public abstract class AnimatedActor extends Actor
 {
+    private final int ANIMATION_SPEED = 3;
+    
+    private int animationIndex = 0;
+    protected SpriteAnimation currentAnimation;
+    protected boolean flipFrames = false; // Right, true for Left
+    
+    protected void setCurrentAnimation(SpriteAnimation newAnimation)
+    {
+        currentAnimation = newAnimation;
+        animationIndex = 0;
+        displayCurrentFrame();
+    }
+    
+    public void act()
+    {
+        //performProcesses();
+        animationIndex = ++animationIndex % currentAnimation.length();
+        displayCurrentFrame();
+    }
+    
+    private void displayCurrentFrame()
+    {
+        GreenfootImage newFrame = currentAnimation.getFrame(animationIndex, flipFrames);
+        setImage(newFrame);
+    }
+    
     private LinkedList<ActorProcess> processes = new LinkedList<ActorProcess>();
     private LinkedList<ActorProcess> toAdd = new LinkedList<ActorProcess>();
 
@@ -22,7 +48,7 @@ public abstract class AnimatedActor extends Actor
         p.setOwner(this);
     }
 
-    public void act() 
+    private void performProcesses() 
     {
         // Add new processes
         processes.addAll(toAdd);

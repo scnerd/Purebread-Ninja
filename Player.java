@@ -20,14 +20,19 @@ public class Player extends Character
     
     public Player()
     {
-        this.setImage("images/BreadNinjaPlaceholder.png");
+        animationFileNameRoot = "bread_ninja";
+        movingFloorFile = movingAirFile = movingWallFile = movingCeilingFile = attackingFile = grapplingFile = null;
+        
+        this.setImage("bread.png");
         this.standFrames = new GreenfootImage[2][];
-        this.standFrames[0] = Resource.loadSpriteFrames("images/BreadNinjaSpriteSmall.png", 32, 26, 1);
+        this.standFrames[0] = Resource.loadSpriteFrames("BreadNinjaSpriteSmall.png", 39, 32, 1);
         this.standFrames[1] = SpriteAnimation.flipFrames(this.standFrames[0]);
         this.animation = new SpriteAnimation(standFrames[0]);
         this.addProcess(this.animation);
         this.controller = new KeyboardInterpreter();
         this.addProcess(new PlayerPositionProcess());
+        
+        loadSpriteSheets();
     }
     
     public CommandInterpreter getController()
@@ -45,7 +50,13 @@ public class Player extends Character
         this.animation.setAnimation(this.standFrames[0], true);
         
     }
+    
+    public void damage(Actor harmer)
+    {
+        this.health -= 1;
+    }
 
+    public int health = 5;
     private Point2D.Double acceleration;
     private int direction = 1;
     private boolean usedUp = false;
@@ -88,6 +99,8 @@ public class Player extends Character
             if(hook != null) { this.getWorld().removeObject(hook); hook = null; }
         }
         finalizeMovement();
+        flipFrames = direction == -1;
+        super.act();
     }
 
     private boolean keyboardLeft()
@@ -202,7 +215,7 @@ public class Player extends Character
                 else if(keyboardRight())
                 { acceleration.x += ACC_MOVEMENT_GROUND; }
             }
-            else if(isOnWall())
+            else if(isOnWall() && !(isOnCeiling() && keyboardUp()))
             {
                 if(keyboardLeft() && keyboardRight())
                 { }

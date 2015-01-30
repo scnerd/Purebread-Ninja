@@ -10,13 +10,11 @@ public class BulletSeedSpawnProcess extends ActorProcess
     private int default_wait_time = 120;
     private int wait_time = 0;
 
-    /**
-     * Constructor for objects of class BulletSeedSpawnProcess
-     */
     public BulletSeedSpawnProcess()
     {
     }
 
+    /*
     @Override
     public void run()
     {
@@ -35,4 +33,7 @@ public class BulletSeedSpawnProcess extends ActorProcess
             wait_time = default_wait_time;
         }
     }
+    */
+   @Override
+   public void run() { }
 }

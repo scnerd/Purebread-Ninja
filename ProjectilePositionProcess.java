@@ -13,6 +13,7 @@ public class ProjectilePositionProcess extends ActorProcess
         this.velocityY = velocityY;
     }
 
+    /*
     @Override
     protected void onStart()
     {
@@ -43,4 +44,7 @@ public class ProjectilePositionProcess extends ActorProcess
         }
     }
 
+    */
+   @Override
+   public void run() { }
 }

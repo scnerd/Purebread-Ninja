@@ -6,6 +6,7 @@ import java.util.HashSet;
 
 public class PlayerPositionProcess extends ActorProcess 
 {
+    /*
     private boolean usedUp = false;
     
     Point2D.Double MAX_VELOCITY = new Point2D.Double(3, 6);
@@ -237,4 +238,7 @@ public class PlayerPositionProcess extends ActorProcess
 
         player.setLocation((int)player.position.x, (int)player.position.y);
     }
+    */
+   @Override
+   public void run() { }
 }

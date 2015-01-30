@@ -7,6 +7,7 @@ public class TimerProcess extends ActorProcess {
         this.duration = duration;
     }
 
+    /*
     @Override
     public void run() {
         if (count++ == duration) {
@@ -14,4 +15,7 @@ public class TimerProcess extends ActorProcess {
         }
     }
 
+    */
+   @Override
+   public void run() { }
 }

@@ -71,15 +71,9 @@ public class Map extends World
                     {
                         try {
                             this.addObject(type.getConstructor().newInstance(), loc.x, loc.y);
-                        } catch(NoSuchMethodException ex) {
-                            return false;
-                        } catch(InstantiationException ex) {
-                            return false;
-                        } catch(IllegalAccessException ex) {
-                            return false;
-                        } catch(IllegalArgumentException ex) {
-                            return false;
-                        } catch(InvocationTargetException ex) {
+                        } catch(Exception ex) {
+                            String msg = String.format("Construction failed at (%d, %d) with exception %s", col, row, ex.toString());
+                            showText(msg, getWidth() / 2, getHeight() / 2);
                             return false;
                         }
                     }

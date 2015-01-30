@@ -10,9 +10,9 @@ import java.awt.geom.Point2D;
 public class BulletSeed extends Projectile
 {
     private static GreenfootImage[] frames = Resource.loadSpriteFrames("images/seed-bullet.png", 32, 32, 1);
-    public BulletSeed()
+    public BulletSeed(Point2D.Double position, double angle)
     {
-        super();
+        super(position, angle);
         this.addProcess(new SpriteAnimation(frames));
         this.addProcess(new TimerProcess(1000, new RemoveActorsProcess(this)));
     } 

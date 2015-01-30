@@ -7,7 +7,7 @@ import java.awt.geom.Point2D;
  * @author (your name) 
  * @version (a version number or a date)
  */
-public class Character extends AnimatedActor
+public abstract class Character extends AnimatedActor
 {
     private enum CharacterState
     {
@@ -20,13 +20,110 @@ public class Character extends AnimatedActor
         GRAPPLING
     }
     
+    private CharacterState previousState = CharacterState.IDLE;
     protected CharacterState state = CharacterState.IDLE;
     public CharacterState getState() { return state; }
+    
+    protected static String animationFileNameRoot = "";
+    
+    // Will contain the animations for each state
+    protected static SpriteAnimation
+    idleAnimation,
+    movingFloorAnimation,
+    movingAirAnimation,
+    movingWallAnimation,
+    movingCeilingAnimation,
+    attackingAnimation,
+    grapplingAnimation;
+    
+    // Determines the filename suffix associated with each sprite sheet
+    protected static String 
+    idleFile = "idle",
+    movingFloorFile = "moving_floor",
+    movingAirFile = "moving_air",
+    movingWallFile = "moving_wall",
+    movingCeilingFile = "moving_ceiling",
+    attackingFile = "attacking",
+    grapplingFile = "grappling";
+    
+    // Determines the number of frames in each animation
+    protected static int
+    idleCount = 8,
+    movingFloorCount = 8,
+    movingAirCount = 8,
+    movingWallCount = 8,
+    movingCeilingCount = 8,
+    attackingCount = 8,
+    grapplingCount = 8,
+    frameCount = 4;
     
     protected Point2D.Double position = null;
     protected Point2D.Double velocity = new Point2D.Double(0, 0);
 
     protected int COLLISION_MARGIN = 2;
+    
+    private String getSpriteSheetFileName(String file)
+    { return String.format("%s_%s.png", animationFileNameRoot, file); }
+    
+    protected void loadSpriteSheets()
+    {
+        if(idleFile != null)
+            idleAnimation = new SpriteAnimation(getSpriteSheetFileName(idleFile), idleCount, frameCount);
+        if(movingFloorFile != null)
+            movingFloorAnimation = new SpriteAnimation(getSpriteSheetFileName(movingFloorFile), movingFloorCount, frameCount);
+        if(movingAirFile != null)
+            movingAirAnimation = new SpriteAnimation(getSpriteSheetFileName(movingAirFile), movingAirCount, frameCount);
+        if(movingWallFile != null)
+            movingWallAnimation = new SpriteAnimation(getSpriteSheetFileName(movingWallFile), movingWallCount, frameCount);
+        if(movingCeilingFile != null)
+            movingCeilingAnimation = new SpriteAnimation(getSpriteSheetFileName(movingCeilingFile), movingCeilingCount, frameCount);
+        if(attackingFile != null)
+            attackingAnimation = new SpriteAnimation(getSpriteSheetFileName(attackingFile), attackingCount, frameCount);
+        if(grapplingFile != null)
+            grapplingAnimation = new SpriteAnimation(getSpriteSheetFileName(grapplingFile), movingFloorCount, frameCount);
+        setCurrentAnimation(idleAnimation);
+    }
+    
+    public void act()
+    {
+        if(state != previousState)
+        {
+            SpriteAnimation newAnimation = selectAnimation(state);
+            if(newAnimation != currentAnimation)
+            {
+                setCurrentAnimation(newAnimation);
+            }
+        }
+        previousState = state;
+        super.act();
+    }
+    
+    private SpriteAnimation selectAnimation(CharacterState curState)
+    {
+        switch(curState)
+        {
+            case IDLE: return idleAnimation;
+            case MOVING_FLOOR: return movingFloorAnimation != null ?
+            movingFloorAnimation :
+            selectAnimation(CharacterState.IDLE);
+            case MOVING_AIR: return movingFloorAnimation != null ?
+            movingAirAnimation :
+            selectAnimation(CharacterState.MOVING_FLOOR);
+            case MOVING_WALL: return movingFloorAnimation != null ?
+            movingWallAnimation :
+            selectAnimation(CharacterState.MOVING_FLOOR);
+            case MOVING_CEILING: return movingFloorAnimation != null ?
+            movingCeilingAnimation :
+            selectAnimation(CharacterState.MOVING_FLOOR);
+            case ATTACKING: return movingFloorAnimation != null ?
+            attackingAnimation :
+            selectAnimation(CharacterState.IDLE);
+            case GRAPPLING: return movingFloorAnimation != null ?
+            grapplingAnimation :
+            selectAnimation(CharacterState.MOVING_AIR);
+        }
+        return null;
+    }
     
     private int sign(double n)
     { return n < 0 ? -1 : 1; }  
@@ -108,4 +205,6 @@ public class Character extends AnimatedActor
         }
         return velocity;
     }
+    
+    public abstract void damage(Actor harmer);
 }

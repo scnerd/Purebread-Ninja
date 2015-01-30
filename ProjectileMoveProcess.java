@@ -10,6 +10,7 @@ public class ProjectileMoveProcess extends ActorProcess
     }
 
 
+    /*
     @Override
     public void run() {
         // Apply Velocity
@@ -22,4 +23,7 @@ public class ProjectileMoveProcess extends ActorProcess
         p.setLocation((int)p.position.x, (int)p.position.y);
     }
 
+    */
+   @Override
+   public void run() { }
 }

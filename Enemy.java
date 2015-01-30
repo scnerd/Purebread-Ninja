@@ -8,4 +8,13 @@ import greenfoot.*;
  */
 public class Enemy extends Character
 {
+    public void act()
+    {
+        
+    }
+    
+    public void damage(Actor harmer)
+    {
+        getWorld().removeObject(this);
+    }
 }

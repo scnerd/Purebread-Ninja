@@ -8,6 +8,7 @@ public class RemoveActorsProcess extends ActorProcess
         this.actors = actors;
     }
 
+    /*
     @Override
     public void run() {
         success();
@@ -18,4 +19,7 @@ public class RemoveActorsProcess extends ActorProcess
         }
     }
 
+    */
+   @Override
+   public void run() { }
 }

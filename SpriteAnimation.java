@@ -9,9 +9,43 @@ import java.awt.image.BufferedImage;
 
 public class SpriteAnimation extends ActorProcess
 {
+    private GreenfootImage[] frames;
+    private GreenfootImage[] flipped;
+    
+    public SpriteAnimation(String imageFile, int numFrames, int ticksPerFrame)
+    {
+        // Load the raw frames into a frame buffer
+        GreenfootImage[] baseFrames = new GreenfootImage[numFrames];
+        GreenfootImage baseImg = new GreenfootImage(imageFile);
+        int frameWidth = baseImg.getWidth() / numFrames;
+        int frameHeight = baseImg.getHeight();
+        BufferedImage rawImg = baseImg.getAwtImage();
+        for(int x = 0; x < numFrames; x++)
+        {
+            baseFrames[x] = new GreenfootImage(frameWidth, frameHeight);
+            baseFrames[x].getAwtImage().setData(rawImg.getSubimage(x * frameWidth, 0, frameWidth, frameHeight).getData());
+        }
+        
+        // Re-use object references to save from copying the images multiple times
+        frames = new GreenfootImage[numFrames * ticksPerFrame];
+        flipped = new GreenfootImage[numFrames * ticksPerFrame];
+        for(int f = 0; f < numFrames; f++)
+            for(int t = 0; t < ticksPerFrame; t++)
+            {
+                frames[f * ticksPerFrame + t] = baseFrames[f];
+                flipped[f * ticksPerFrame + t] = new GreenfootImage(baseFrames[f]);
+                flipped[f * ticksPerFrame + t].mirrorHorizontally();
+            }
+    }
+    
+    public GreenfootImage getFrame(int index, boolean flipFrame)
+    { return flipFrame ? flipped[index] : frames[index]; }
+    
+    public int length()
+    { return frames.length; }
+    
     public static final int TICKS_PER_FRAME = 5;
 
-    private GreenfootImage[] frames;
     private int counter;
     private int index;
     private boolean isStarted = false;
@@ -33,11 +67,13 @@ public class SpriteAnimation extends ActorProcess
         this.setAnimation(frames, true);
     }
     
+    /*
     public SpriteAnimation(String imageFile, int width, int height)
     {
         
         this.setAnimation(frames, true);
     }
+    */
 
     public SpriteAnimation(GreenfootImage[] frames, ActorProcess after)
     {

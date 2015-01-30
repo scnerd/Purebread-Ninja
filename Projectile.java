@@ -9,40 +9,41 @@ import java.awt.geom.Point2D;
  */
 public class Projectile extends AnimatedActor
 {
-    public final Point2D.Double MAX_VELOCITY = new Point2D.Double(3, 6);
+    protected static final double BULLET_VELOCITY = 5;
     
-    private Point2D.Double position = null;
-    private Point2D.Double velocity = new Point2D.Double(0,0);
+    protected double angle;
+    protected Point2D.Double position;
     
-    protected ProjectilePositionProcess moveProcess;
-    public int COLLISION_MARGIN = 2;
-    
-    public Projectile()
+    public Projectile(Point2D.Double position, double angle)
     {
-        this.moveProcess = new ProjectilePositionProcess(-2.0, 0.0);
-        this.addProcess(this.moveProcess);
+        this.position = position;
+        this.angle = angle;
+    }
+    
+    public void act()
+    {
+        updatePosition();
+        checkCollisions();
     }
     
     protected void updatePosition()
     {
-        if(position == null)
-        {
-            this.position = new Point2D.Double(this.getX(), this.getY());
-        }
-        velocity.x = (velocity.x < 0 ? -1 : 1) * Math.min(Math.abs(velocity.x), MAX_VELOCITY.x);
-        velocity.y = (velocity.y < 0 ? -1 : 1) * Math.min(Math.abs(velocity.y), MAX_VELOCITY.y);
-        position.x += velocity.x;
-        position.y += velocity.y;
-
+        position.x += BULLET_VELOCITY * Math.cos(angle);
+        position.y += BULLET_VELOCITY * Math.sin(angle);
         setLocation((int)position.x, (int)position.y);
     }
     
-    public void setVelocity(double x, double y) {
-        this.velocity.x = x;
-        this.velocity.y = y;
-    }
-    
-    public void setVelocity(Point2D.Double velocity) {
-        this.velocity = velocity;
+    protected void checkCollisions()
+    {
+        Actor intersects = null;
+        if((intersects = getOneIntersectingObject(Player.class)) != null)
+        {
+            ((Player)intersects).damage(this);
+            getWorld().removeObject(this);
+        }
+        else if((intersects = getOneIntersectingObject(Platform.class)) != null)
+        {
+            getWorld().removeObject(this);
+        }
     }
 }
