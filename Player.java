@@ -12,21 +12,27 @@ import java.util.HashSet;
  */
 public class Player extends Character
 {
+    private Point2D.Double acceleration;
+    private int direction = 1;
     private boolean usedUp = false;
+    private GrapplingHook hook = null;
     
     Point2D.Double MAX_VELOCITY = new Point2D.Double(3, 6);
     
     private double ACC_GRAVITY = 0.25;
     private double ACC_GROUND_JUMP = 4.5;
+    private double ACC_HOLD_JUMP = 0.1;
     
     private double ACC_MOVEMENT_GROUND = 0.4;
-    private double ACC_MOVEMENT_AIR = 0.2;
+    private double ACC_MOVEMENT_AIR = 0.25;
     private double ACC_FRICTION = 0.4;
     
     private double ACC_WALL_HOLD = 0.2;
     private double ACC_WALL_JUMP = 4.5;
     private double ACC_WALL_JUMP_HORZ = 2;
     private double SLOWEST_SLIDE = 1;
+    
+    private double GRAPPLE_SPEED = 2.5;
 
     /**
      * Act - do whatever the Player wants to do. This method is called whenever
@@ -39,6 +45,15 @@ public class Player extends Character
             position = new Point2D.Double(getX(), getY());
         }
         enactMovement();
+        if(keyboardGrapple())
+        {
+            enactGrapple();
+        }
+        else
+        {
+            if(hook != null) { this.getWorld().removeObject(hook); hook = null; }
+        }
+        finalizeMovement();
     }
 
     private boolean keyboardLeft()
@@ -48,7 +63,10 @@ public class Player extends Character
     { return Greenfoot.isKeyDown("d") || Greenfoot.isKeyDown("right"); }
 
     private boolean keyboardUp()
-    { return Greenfoot.isKeyDown("w") || Greenfoot.isKeyDown("up"); }
+    { return Greenfoot.isKeyDown("w") || Greenfoot.isKeyDown("up") || Greenfoot.isKeyDown("space"); }
+    
+    private boolean keyboardGrapple()
+    { return Greenfoot.isKeyDown("shift"); }
 
     private HashSet groundTiles()
     {
@@ -118,7 +136,7 @@ public class Player extends Character
     {
         int leftX = -getImage().getWidth() / 2 + COLLISION_MARGIN;
         int rightX = getImage().getWidth() / 2 - COLLISION_MARGIN;
-        int up = -getImage().getHeight() / 2;
+        int up = -getImage().getHeight() / 2 - 1;
 
         HashSet toReturn = new HashSet();
         toReturn.addAll(getObjectsAtOffset(leftX, up, Platform.class));
@@ -134,7 +152,7 @@ public class Player extends Character
     private void enactMovement()
     {
         // Calculate accelerations
-        Point2D.Double acceleration = new Point2D.Double(0, 0);
+        acceleration = new Point2D.Double(0, 0);
         // - Gravity
         acceleration.y += ACC_GRAVITY;
 
@@ -172,7 +190,7 @@ public class Player extends Character
                 { acceleration.x += ACC_MOVEMENT_AIR; }
             }
         }
-        else if(isOnGround())
+        else if(isOnGround() || isOnCeiling())
         {
             // Get friction in the correct direction
             acceleration.x += (velocity.x < 0 ? 1 : -1) * ACC_FRICTION;
@@ -182,18 +200,22 @@ public class Player extends Character
         }
 
         // - Jumping
-        if(keyboardUp() && !usedUp)
+        if(keyboardUp())
         {
-            if(isOnGround())
+            if(isOnCeiling())
+            {
+                acceleration.y = -velocity.y;
+            }
+            else if(isOnGround() && !usedUp)
             { acceleration.y = -ACC_GROUND_JUMP; }
-            else if(isOnWall())
+            else if(isOnWall() && !usedUp)
             {
                 int jump_dir = 0;
-                if(isOnLeftWall() && keyboardLeft())
+                if(isOnLeftWall())
                 {
                     jump_dir = 1;
                 }
-                else if(isOnRightWall() && keyboardRight())
+                else if(isOnRightWall())
                 {
                     jump_dir = -1;
                 }
@@ -202,17 +224,43 @@ public class Player extends Character
                     acceleration = new Point2D.Double(jump_dir * ACC_WALL_JUMP_HORZ, -ACC_WALL_JUMP - velocity.y);
                 }
             }
+            else if(!isOnGround() && !isOnWall())
+            {
+                acceleration.y -= ACC_HOLD_JUMP;
+            }
             usedUp = true;
         }
         else if(!keyboardUp())
         {
             usedUp = false;
         }
-
+    }
+    
+    private void enactGrapple()
+    {
+        if(hook == null)
+        {
+            hook = new GrapplingHook(this, this.direction);
+            this.getWorld().addObject(hook, getX(), getY());
+        }
+        else
+        {
+            if(hook.getIsHooked())
+            {
+                java.awt.Point target = hook.getHookTarget();
+                double angle = Math.atan2(target.y - this.getY(), target.x - this.getX());
+                acceleration.x += GRAPPLE_SPEED * Math.cos(angle);
+                acceleration.y += GRAPPLE_SPEED * Math.sin(angle);
+            }
+        }
+    }
+    
+    private void finalizeMovement()
+    {
         // Calculate velocity
         velocity.x += acceleration.x;
         velocity.y += acceleration.y;
-
+        
         // Tweak to avoid superimposition
         velocity.x = stepX(velocity.x);
         velocity.y = stepY(velocity.y);
@@ -222,7 +270,15 @@ public class Player extends Character
         velocity.y = (velocity.y < 0 ? -1 : 1) * Math.min(Math.abs(velocity.y), MAX_VELOCITY.y);
         position.x += velocity.x;
         position.y += velocity.y;
+        
+        if(velocity.x < 0)
+            direction = -1;
+        else if(velocity.x > 0)
+            direction = 1;
 
         setLocation((int)position.x, (int)position.y);
     }
+    
+    public Actor publicGetOneObjectAtOffset(int dx, int dy, java.lang.Class cls)
+    { return this.getOneObjectAtOffset(dx, dy, cls); }
 }

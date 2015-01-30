@@ -9,6 +9,20 @@ import java.awt.geom.Point2D;
  */
 public class Character extends Actor
 {
+    private enum CharacterState
+    {
+        IDLE,
+        MOVING_FLOOR,
+        MOVING_AIR,
+        MOVING_WALL,
+        MOVING_CEILING,
+        ATTACKING,
+        GRAPPLING
+    }
+    
+    protected CharacterState state = CharacterState.IDLE;
+    public CharacterState getState() { return state; }
+    
     protected Point2D.Double position = null;
     protected Point2D.Double velocity = new Point2D.Double(0, 0);
 
@@ -93,7 +107,7 @@ public class Character extends Actor
                     int nearest_edge = direction < 0 ? collide.bottom() : collide.top();
                     double correction = nearest_edge - front;
                     int correction_direction = correction < 0 ? -1 : 1;
-                    if(correction_direction != direction)
+                    if(correction != 0 && correction_direction != direction)
                         continue; // Different from X, which moves to correct
                     else
                         velocity = direction * Math.min(Math.abs(velocity), Math.abs(correction));
