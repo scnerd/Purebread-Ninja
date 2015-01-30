@@ -9,94 +9,81 @@ import java.awt.image.BufferedImage;
 
 public class SpriteAnimation extends ActorProcess
 {
-    public static GreenfootImage[] loadFramesFromSheet(GreenfootImage sheet,
-        Dimension size, List<Point> locations)
-    {
-        int w = size.width;
-        int h = size.height;
-        int length = locations.size();
-        GreenfootImage[] frames = new GreenfootImage[length];
-        BufferedImage srcSheet = sheet.getAwtImage();
-        Iterator<Point> itr = locations.iterator();
-        for (int i=0; itr.hasNext(); i++)
-        {
-            Point p = itr.next();
-            frames[i] =  new GreenfootImage(w, h);
-            BufferedImage img = frames[i].getAwtImage();
-            BufferedImage src = srcSheet.getSubimage(p.x, p.y, w, h);
-            img.setData(src.getData());    
-        }
-
-        return frames;
-    }
-
-    public static GreenfootImage[] loadFramesLeftToRight(String imgFile,
-        int frameWidth, int frameHeight)
-    {
-        Dimension size = new Dimension(frameWidth, frameHeight);
-        GreenfootImage sheet = new GreenfootImage(imgFile);
-        sheet.getWidth();
-        List<Point> points = new LinkedList<Point>();
-        for (int x=0; x < sheet.getWidth(); x = x + frameWidth)
-        {
-            points.add(new Point(x, 0));
-        }
-        return loadFramesFromSheet(sheet, size, points);
-    }
+    public static final int TICKS_PER_FRAME = 5;
 
     private GreenfootImage[] frames;
-    private int duration;
-    private int frameDuration;
+    private int counter;
     private int index;
-    private long frameStartTime;
     private boolean isStarted = false;
-    boolean repeat = true;
-
-    public SpriteAnimation(GreenfootImage[] frames, int duration) {
-        super();
-        this.setAnimation(frames, duration);
-
+    private boolean repeat;
+    
+    public static GreenfootImage[] flipFrames(GreenfootImage[] frames)
+    {
+        GreenfootImage[] result = new GreenfootImage[frames.length];
+        for (int i = 0; i < frames.length; i++)
+        {
+            result[i] = new GreenfootImage(frames[i]);
+            result[i].mirrorHorizontally();
+        }
+        return result;
     }
 
-    public SpriteAnimation(GreenfootImage[] frames, int duration, ActorProcess after) {
+    public SpriteAnimation(GreenfootImage[] frames)
+    {
+        this.setAnimation(frames, true);
+    }
+    
+    public SpriteAnimation(String imageFile, int width, int height)
+    {
+        
+        this.setAnimation(frames, true);
+    }
+
+    public SpriteAnimation(GreenfootImage[] frames, ActorProcess after)
+    {
         super(after);
-        this.setAnimation(frames, duration);
-        this.repeat = false;
+        this.setAnimation(frames, false);
     }
 
-    public void setAnimation(GreenfootImage[] frames, int duration) {
+    public void setAnimation(GreenfootImage[] frames, boolean repeat)
+    {
         this.frames = frames;
-        this.duration = duration;
-        this.frameDuration = duration/frames.length;
+        this.repeat = repeat;
         this.restart();
     }
 
     @Override
-    public void run() {
-        if (System.currentTimeMillis() - frameStartTime > frameDuration) {
+    protected void onStart()
+    {
+        this.isStarted = true;
+        restart();
+    }
+    
+    @Override
+    public void run()
+    {
+        if (++this.counter % TICKS_PER_FRAME == 0)
+        {
             showNextFrame();
         }
     }
 
-    @Override
-    protected void onStart(){
-        this.isStarted = true;
-        restart();
-    }
-
-    private void showNextFrame() {
-        this.frameStartTime = System.currentTimeMillis();
+    private void showNextFrame()
+    {
         this.owner.setImage(frames[index++ % frames.length]);
-        if (frames.length < index && !this.repeat){
+        if (frames.length < index && !this.repeat)
+        {
             this.success();
         }
 
     }
 
     public void restart() {
-        if (this.isStarted) {
+        if (this.isStarted)
+        {
+            this.counter = 0;
             this.index = 0;
             showNextFrame();
         }
-    };
+    }
 }

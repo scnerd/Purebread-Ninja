@@ -4,6 +4,7 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+
 /**
  * Write a description of class Player here.
  * 
@@ -12,6 +13,39 @@ import java.util.HashSet;
  */
 public class Player extends Character
 {
+    protected CommandInterpreter controller;
+    protected SpriteAnimation animation;
+    protected GreenfootImage[][] standFrames;
+    protected GreenfootImage[] leftStandFrames;
+    
+    public Player()
+    {
+        this.setImage("images/BreadNinjaPlaceholder.png");
+        this.standFrames = new GreenfootImage[2][];
+        this.standFrames[0] = Resource.loadSpriteFrames("images/BreadNinjaSpriteSmall.png", 32, 26, 1);
+        this.standFrames[1] = SpriteAnimation.flipFrames(this.standFrames[0]);
+        this.animation = new SpriteAnimation(standFrames[0]);
+        this.addProcess(this.animation);
+        this.controller = new KeyboardInterpreter();
+        this.addProcess(new PlayerPositionProcess());
+    }
+    
+    public CommandInterpreter getController()
+    {
+        return controller;
+    }
+    
+    public void faceLeft()
+    {
+        this.animation.setAnimation(this.standFrames[1], true);        
+    }
+
+    public void faceRight()
+    {
+        this.animation.setAnimation(this.standFrames[0], true);
+        
+    }
+
     private Point2D.Double acceleration;
     private int direction = 1;
     private boolean usedUp = false;
@@ -84,7 +118,7 @@ public class Player extends Character
     {
         return groundTiles().size() > 0;
     }
-    
+
     private HashSet rightWallTiles()
     {
         int rightX = getImage().getWidth() / 2;
@@ -96,7 +130,7 @@ public class Player extends Character
         toReturn.addAll(getObjectsAtOffset(rightX, upY, Platform.class));
         return toReturn;
     }
-    
+
     private HashSet leftWallTiles()
     {
         int leftX = -getImage().getWidth() / 2 - 1;
@@ -121,7 +155,7 @@ public class Player extends Character
     {
         return wallTiles().size() > 0;
     }
-    
+
     private boolean isOnLeftWall()
     {
         return leftWallTiles().size() > 0;
@@ -281,4 +315,5 @@ public class Player extends Character
     
     public Actor publicGetOneObjectAtOffset(int dx, int dy, java.lang.Class cls)
     { return this.getOneObjectAtOffset(dx, dy, cls); }
+   
 }

@@ -19,5 +19,5 @@ public class Levels extends World
         super(600, 400, 1); 
     }
     
-    public static final String DEFAULT = "\n_  0     _\n_  _ _   _\n_        _\n_ _   _  _\n_  ___   _\n";
+    public static final String DEFAULT = "\n\n__ 0    _\n_  _ _   _\n_        _\n_ _   _  _\n_  ___   _\n \n \n                1\n__________________\n";
 }

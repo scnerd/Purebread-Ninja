@@ -11,10 +11,8 @@ import java.util.Arrays;
  * @author (your name) 
  * @version (a version number or a date)
  */
-public class AnimatedActor extends Actor
+public abstract class AnimatedActor extends Actor
 {
-    
-   
     private LinkedList<ActorProcess> processes = new LinkedList<ActorProcess>();
     private LinkedList<ActorProcess> toAdd = new LinkedList<ActorProcess>();
 
@@ -23,10 +21,7 @@ public class AnimatedActor extends Actor
         toAdd.push(p);
         p.setOwner(this);
     }
-    /**
-     * Act - do whatever the AnimatedActor wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
+
     public void act() 
     {
         // Add new processes

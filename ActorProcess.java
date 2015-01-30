@@ -20,11 +20,12 @@ public abstract class ActorProcess
 
     abstract void run();
 
-    public ActorProcess() {
-
+    public ActorProcess()
+    {
     }
 
-    public ActorProcess(ActorProcess child) {
+    public ActorProcess(ActorProcess child)
+    {
         this.child = child;
     }
 
@@ -63,7 +64,8 @@ public abstract class ActorProcess
 
     public boolean isDone()
     {
-        switch(this.state) {
+        switch(this.state)
+        {
             case ABORTED:
             case FAILED:
             case SUCCESS:
