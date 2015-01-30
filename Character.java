@@ -7,7 +7,7 @@ import java.awt.geom.Point2D;
  * @author (your name) 
  * @version (a version number or a date)
  */
-public class Character extends Actor
+public class Character extends AnimatedActor
 {
     protected Point2D.Double position = null;
     protected Point2D.Double velocity = new Point2D.Double(0, 0);
