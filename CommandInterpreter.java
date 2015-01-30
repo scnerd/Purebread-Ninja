@@ -10,10 +10,12 @@ public interface CommandInterpreter
     {
         LEFT,
         RIGHT,
-        UP
+        UP,
+        GRAPPLE
     }
         
     public boolean commandLeft();
     public boolean commandRight();
     public boolean commandUp();
+    public boolean commandGrapple();
 }

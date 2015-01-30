@@ -37,6 +37,11 @@ public class KeyboardInterpreter implements CommandInterpreter
         return checkCommandKeys(Command.UP);
     }
     
+    public boolean commandGrapple()
+    {
+        return checkCommandKeys(Command.GRAPPLE);
+    }
+    
     public void unbind(String key) {
         for (CommandInterpreter.Command cmd : Command.values())
         {
@@ -50,6 +55,7 @@ public class KeyboardInterpreter implements CommandInterpreter
         keyBindings.get(Command.LEFT).addAll(Arrays.asList("a", "left"));
         keyBindings.get(Command.RIGHT).addAll(Arrays.asList("d", "right"));
         keyBindings.get(Command.UP).addAll(Arrays.asList("w", "up", "space"));
+        keyBindings.get(Command.GRAPPLE).addAll(Arrays.asList("shift"));
     }
     
     public void clearKeyBindings() {
