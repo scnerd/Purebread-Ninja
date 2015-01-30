@@ -14,6 +14,12 @@ public class Character extends AnimatedActor
 
     protected int COLLISION_MARGIN = 2;
     
+    
+    public Character()
+    {
+        super();
+    }
+    
     private int sign(double n)
     { return n < 0 ? -1 : 1; }
     
@@ -24,6 +30,7 @@ public class Character extends AnimatedActor
     public void act() 
     {
         // Add your action code here.
+        super.act();
     }    
 
     protected double stepX(double velocity)

@@ -4,6 +4,7 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+
 /**
  * Write a description of class Player here.
  * 
@@ -28,12 +29,20 @@ public class Player extends Character
     private double ACC_WALL_JUMP_HORZ = 2;
     private double SLOWEST_SLIDE = 1;
 
+    
+    public Player() {
+        super();
+        //this.addProcess(new SpriteAnimation("./images/BreadNinjaSprite.png", 108, 99));
+        //System.out.println(new java.io.File(".").getAbsolutePath());
+    }
+    
     /**
      * Act - do whatever the Player wants to do. This method is called whenever
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
     public void act() 
     {
+        super.act();
         if(position == null)
         {
             position = new Point2D.Double(getX(), getY());

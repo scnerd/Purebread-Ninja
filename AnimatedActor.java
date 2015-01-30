@@ -11,13 +11,14 @@ import java.util.Arrays;
  * @author (your name) 
  * @version (a version number or a date)
  */
-public class AnimatedActor extends Actor
+public abstract class AnimatedActor extends Actor
 {
     
    
     private LinkedList<ActorProcess> processes = new LinkedList<ActorProcess>();
     private LinkedList<ActorProcess> toAdd = new LinkedList<ActorProcess>();
 
+    
     public void addProcess(ActorProcess p)
     {
         toAdd.push(p);

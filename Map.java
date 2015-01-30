@@ -66,6 +66,7 @@ public class Map extends World
                     Point loc = gridToCenter(col, row);
                     Class<? extends Actor> type = (Class<? extends Actor>)
                         TYPE_MAPPING.get(line.charAt(col));
+                    
                     if(type != null)
                     {
                         try {
