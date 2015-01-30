@@ -7,14 +7,14 @@ import java.awt.geom.Point2D;
  * @author (your name) 
  * @version (a version number or a date)
  */
-public class Projectile extends Actor
+public class Projectile extends AnimatedActor
 {
-    Point2D.Double MAX_VELOCITY = new Point2D.Double(3, 6);
+    public Point2D.Double MAX_VELOCITY = new Point2D.Double(3, 6);
     
-    protected Point2D.Double position = null;
-    protected Point2D.Double velocity = new Point2D.Double(0, 0);
+    public Point2D.Double position = null;
+    public Point2D.Double velocity = new Point2D.Double(0, 0);
 
-    protected int COLLISION_MARGIN = 2;
+    public int COLLISION_MARGIN = 2;
     
     /**
      * Act - do whatever the Projectile wants to do. This method is called whenever
