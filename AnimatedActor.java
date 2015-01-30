@@ -11,29 +11,15 @@ import java.util.Arrays;
  * @author (your name) 
  * @version (a version number or a date)
  */
-public abstract class AnimatedActor extends Actor
+public abstract class AnimatedActor extends VisibleActor
 {
     private LinkedList<ActorProcess> processes = new LinkedList<ActorProcess>();
     private LinkedList<ActorProcess> toAdd = new LinkedList<ActorProcess>();
-    protected Map map;
-    
-    private int worldX;
-    private int worldY;
 
     public void addProcess(ActorProcess p)
     {
         toAdd.push(p);
         p.setOwner(this);
-    }
-    
-    @Override
-    protected void addedToWorld(World world)
-    {
-        if (Map.class.isAssignableFrom(world.getClass()))
-        {
-            this.map = (Map)world;
-        }
-        
     }
 
     @Override
@@ -68,28 +54,5 @@ public abstract class AnimatedActor extends Actor
         }
     }
     
-    public int getX()
-    {
-        return this.worldX;
-    }
-    
-    public int getY()
-    {
-        return this.worldY;
-    }
-    
-    public void setLocation(int x, int y)
-    {
-        if (map != null)
-        {
-            super.setLocation( x - map.camX + map.getWidth()/2, y -  map.camY + map.getHeight()/2);
-        }
-        else
-        {
-            super.setLocation(x, y);
-        }
-        this.worldX = x;
-        this.worldY = y;
-  
-    }
+
 }

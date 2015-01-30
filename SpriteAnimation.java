@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 
 public class SpriteAnimation extends ActorProcess
 {
-    public static final int TICKS_PER_FRAME = 5;
+    public static final int TICKS_PER_FRAME = 3;
 
     private GreenfootImage[] frames;
     private int counter;

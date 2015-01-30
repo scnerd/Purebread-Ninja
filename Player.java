@@ -83,7 +83,7 @@ public class Player extends Character
     }
     
     @Override
-    protected void addedToWorld(World world)
+    public void addedToWorld(World world)
     {
         super.addedToWorld(world);
         if (Map.class.isAssignableFrom(world.getClass()))
