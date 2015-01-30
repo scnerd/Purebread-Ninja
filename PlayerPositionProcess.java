@@ -25,6 +25,8 @@ public class PlayerPositionProcess extends ActorProcess
     private Player player;
     private CommandInterpreter controller;
     
+    private int lastVelocityX = 1;
+    
     @Override
     public void onStart()
     {
@@ -48,6 +50,16 @@ public class PlayerPositionProcess extends ActorProcess
     public void run() 
     {
         updatePosition();
+        if (player.velocity.x < 0 && lastVelocityX > 0)
+        {
+            player.faceLeft();
+            lastVelocityX = -1;
+        }
+        else if (player.velocity.x > 0 && lastVelocityX < 0)
+        {
+            player.faceRight();
+            lastVelocityX = 1;
+        }
     }
 
     private HashSet groundTiles()

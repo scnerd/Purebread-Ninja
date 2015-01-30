@@ -14,10 +14,12 @@ public class Projectile extends AnimatedActor
     private Point2D.Double position = null;
     private Point2D.Double velocity = new Point2D.Double(0,0);
     
-    protected ProjectilePositionProcess moveProcess = new ProjectilePositionProcess(-2.0, 0.0);
+    protected ProjectilePositionProcess moveProcess;
     public int COLLISION_MARGIN = 2;
     
-    public Projectile() {
+    public Projectile()
+    {
+        this.moveProcess = new ProjectilePositionProcess(-2.0, 0.0);
         this.addProcess(this.moveProcess);
     }
     

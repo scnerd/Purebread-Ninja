@@ -13,17 +13,19 @@ import java.util.HashSet;
  */
 public class Player extends Character
 {
-
-    
     protected CommandInterpreter controller;
     protected SpriteAnimation animation;
-    protected GreenfootImage[] runFrames;
+    protected GreenfootImage[][] standFrames;
+    protected GreenfootImage[] leftStandFrames;
     
     public Player()
     {
-        this.runFrames = Resource.loadSpriteFrames("images/BreadNinjaSprite.png", 109, 88, 0.5);
-        this.animation = new SpriteAnimation(runFrames);
-        //this.addProcess(this.animation);
+        this.setImage("images/BreadNinjaPlaceholder.png");
+        this.standFrames = new GreenfootImage[2][];
+        this.standFrames[0] = Resource.loadSpriteFrames("images/BreadNinjaSpriteSmall.png", 32, 26, 1);
+        this.standFrames[1] = SpriteAnimation.flipFrames(this.standFrames[0]);
+        this.animation = new SpriteAnimation(standFrames[0]);
+        this.addProcess(this.animation);
         this.controller = new KeyboardInterpreter();
         this.addProcess(new PlayerPositionProcess());
     }
@@ -37,6 +39,17 @@ public class Player extends Character
     public CommandInterpreter getController()
     {
         return controller;
+    }
+    
+    public void faceLeft()
+    {
+        this.animation.setAnimation(this.standFrames[1], true);        
+    }
+    
+    public void faceRight()
+    {
+        this.animation.setAnimation(this.standFrames[0], true);
+        
     }
    
 }

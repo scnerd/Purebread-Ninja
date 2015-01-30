@@ -10,14 +10,23 @@ import java.awt.image.BufferedImage;
 public class SpriteAnimation extends ActorProcess
 {
     public static final int TICKS_PER_FRAME = 5;
-    
-    
 
     private GreenfootImage[] frames;
     private int counter;
     private int index;
     private boolean isStarted = false;
     private boolean repeat;
+    
+    public static GreenfootImage[] flipFrames(GreenfootImage[] frames)
+    {
+        GreenfootImage[] result = new GreenfootImage[frames.length];
+        for (int i = 0; i < frames.length; i++)
+        {
+            result[i] = new GreenfootImage(frames[i]);
+            result[i].mirrorHorizontally();
+        }
+        return result;
+    }
 
     public SpriteAnimation(GreenfootImage[] frames)
     {

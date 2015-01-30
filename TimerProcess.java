@@ -1,22 +1,17 @@
 public class TimerProcess extends ActorProcess {
 
-    private long duration;
-    private long start;
-    public TimerProcess(long duration, ActorProcess after) {
+    private int duration;
+    private int count;
+    public TimerProcess(int duration, ActorProcess after) {
         super(after);
         this.duration = duration;
     }
 
     @Override
     public void run() {
-        if (System.currentTimeMillis() - start > duration) {
+        if (count++ == duration) {
             success();
         }
-    }
-
-    @Override
-    protected void onStart(){
-        this.start = System.currentTimeMillis();
     }
 
 }
