@@ -24,6 +24,7 @@ public class Player extends Character
         this.addProcess(this.animation);
         this.controller = new KeyboardInterpreter();
         this.addProcess(new PlayerPositionProcess());
+        
     }
     
     public CommandInterpreter getController()
@@ -79,5 +80,16 @@ public class Player extends Character
     public List getObjectsAtOffset(int dx, int dy, java.lang.Class cls)
     {
         return super.getObjectsAtOffset(dx, dy, cls);
+    }
+    
+    @Override
+    protected void addedToWorld(World world)
+    {
+        super.addedToWorld(world);
+        if (Map.class.isAssignableFrom(world.getClass()))
+        {
+            ((Map)world).player = this;
+            this.addProcess(new CameraFollowProcess((Map) this.getWorld()));
+        }
     }
 }

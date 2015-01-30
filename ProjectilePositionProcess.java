@@ -35,12 +35,10 @@ public class ProjectilePositionProcess extends ActorProcess
     {
         this.projectile.setVelocity(velocityX, velocityY);
         this.projectile.updatePosition();
-        if (this.owner.getX() == 0 || this.owner.getX() == this.owner.getWorld().getWidth()) {
+        if (projectile.isAtEdge()) {
             success();
         }
-        else if (this.owner.getY() == 0 || this.owner.getY() == this.owner.getWorld().getHeight()) {
-            success();
-        }
+
     }
 
 }

@@ -25,7 +25,9 @@ public class Map extends World
     public static int levelWidth = 0;
     public static int levelHeight = 0;
     protected static HashMap TYPE_MAPPING = new HashMap<Character, Class<? extends Actor>>();
-    
+    public int camX = 0;
+    public int camY = 0;
+    public Player player;
     /**
      * Constructor for objects of class Map.
      * 
@@ -33,7 +35,7 @@ public class Map extends World
     public Map()
     {    
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
-        super(800, 600, 1);
+        super(800, 600, 1, false);
         
         if(TYPE_MAPPING.isEmpty())
         {
@@ -47,6 +49,21 @@ public class Map extends World
         }
 
         loadLevel(Levels.DEFAULT);
+    }
+    
+    public void setCameraLocation(int x, int y)
+    {
+        if (this.camX != x || this.camY != y)
+        {
+            this.camX = x;
+            this.camY = y;
+            for (Object o : this.getObjects(null))
+            {
+                Actor a = (Actor) o;
+                a.setLocation(a.getX(), a.getY());
+            }
+        }
+        
     }
 
     private boolean loadLevel(String mapData)

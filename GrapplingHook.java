@@ -8,7 +8,7 @@ import java.awt.Point;
  * @author (your name) 
  * @version (a version number or a date)
  */
-public class GrapplingHook extends Actor
+public class GrapplingHook extends AnimatedActor
 {
     private double SPEED = 6;
     private double ANGLE = 60;
