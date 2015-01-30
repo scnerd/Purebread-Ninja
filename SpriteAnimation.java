@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 
 public class SpriteAnimation extends ActorProcess
 {
+    public static final int TICKS_PER_FRAME = 5;
     public static GreenfootImage[] loadFramesFromSheet(GreenfootImage sheet,
         Dimension size, List<Point> locations)
     {
@@ -45,35 +46,36 @@ public class SpriteAnimation extends ActorProcess
     }
 
     private GreenfootImage[] frames;
-    private int duration;
-    private int frameDuration;
+    private int counter;
     private int index;
-    private long frameStartTime;
     private boolean isStarted = false;
     boolean repeat = true;
 
-    public SpriteAnimation(GreenfootImage[] frames, int duration) {
+    public SpriteAnimation(GreenfootImage[] frames) {
         super();
-        this.setAnimation(frames, duration);
+        this.setAnimation(frames);
 
     }
+    public SpriteAnimation(String spriteImage, int width, int height) {
+        super();
+        this.setAnimation(loadFramesLeftToRight(spriteImage, width, height));
+        
+    }
 
-    public SpriteAnimation(GreenfootImage[] frames, int duration, ActorProcess after) {
+    public SpriteAnimation(GreenfootImage[] frames, ActorProcess after) {
         super(after);
-        this.setAnimation(frames, duration);
+        this.setAnimation(frames);
         this.repeat = false;
     }
 
-    public void setAnimation(GreenfootImage[] frames, int duration) {
+    public void setAnimation(GreenfootImage[] frames) {
         this.frames = frames;
-        this.duration = duration;
-        this.frameDuration = duration/frames.length;
         this.restart();
     }
 
     @Override
     public void run() {
-        if (System.currentTimeMillis() - frameStartTime > frameDuration) {
+        if (++this.counter % TICKS_PER_FRAME == 0) {
             showNextFrame();
         }
     }
@@ -85,7 +87,6 @@ public class SpriteAnimation extends ActorProcess
     }
 
     private void showNextFrame() {
-        this.frameStartTime = System.currentTimeMillis();
         this.owner.setImage(frames[index++ % frames.length]);
         if (frames.length < index && !this.repeat){
             this.success();
@@ -95,6 +96,7 @@ public class SpriteAnimation extends ActorProcess
 
     public void restart() {
         if (this.isStarted) {
+            this.counter = 0;
             this.index = 0;
             showNextFrame();
         }
