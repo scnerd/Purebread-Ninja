@@ -22,7 +22,6 @@ public abstract class ActorProcess
 
     public ActorProcess()
     {
-
     }
 
     public ActorProcess(ActorProcess child)

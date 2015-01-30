@@ -20,5 +20,4 @@ public class Levels extends World
     }
     
     public static final String DEFAULT = "\n__ 0    _\n_  _ _   _\n_        _\n_ _   _  _\n_  ___   _\n \n \n                1\n__________________\n";
-    //public static final String DEFAULT = "\n_  0     _\n";
 }

@@ -25,13 +25,12 @@ public class BulletSeedSpawnProcess extends ActorProcess
         }
         else {
             // shoot
-            try {
-                this.owner.getWorld().addObject(BulletSeed.class.getConstructor().newInstance(), this.owner.getX(), this.owner.getY());
-            } catch(NoSuchMethodException ex) {
-            } catch(InstantiationException ex) {
-            } catch(IllegalAccessException ex) {
-            } catch(IllegalArgumentException ex) {
-            } catch(Exception ex) {
+            try
+            {
+                BulletSeed bullet = BulletSeed.class.getConstructor().newInstance();
+                this.owner.getWorld().addObject(bullet, this.owner.getX(), this.owner.getY());
+            } catch(Exception ex)
+            {
             }
             wait_time = default_wait_time;
         }

@@ -5,12 +5,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.lang.reflect.InvocationTargetException;
 
-/**
- * Write a description of class ButterRonin here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 public class ButterRonin extends Enemy
 {   
     public ButterRonin()

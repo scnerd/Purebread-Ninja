@@ -14,24 +14,8 @@ public class Character extends AnimatedActor
 
     protected int COLLISION_MARGIN = 2;
     
-    
-    public Character()
-    {
-        super();
-    }
-    
     private int sign(double n)
-    { return n < 0 ? -1 : 1; }
-    
-    /**
-     * Act - do whatever the Character wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
-    public void act() 
-    {
-        // Add your action code here.
-        super.act();
-    }    
+    { return n < 0 ? -1 : 1; }  
 
     protected double stepX(double velocity)
     {

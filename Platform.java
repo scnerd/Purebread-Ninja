@@ -12,14 +12,6 @@ public class Platform extends Actor
     public Platform() {
         this.setImage("images/brick.jpg");
     }
-    /**
-     * Act - do whatever the Platform wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
-    public void act() 
-    {
-        // Add your action code here.
-    }
     
     public int left()
     { return getX() - getImage().getWidth() / 2; }

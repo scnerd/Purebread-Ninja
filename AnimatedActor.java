@@ -16,16 +16,12 @@ public abstract class AnimatedActor extends Actor
     private LinkedList<ActorProcess> processes = new LinkedList<ActorProcess>();
     private LinkedList<ActorProcess> toAdd = new LinkedList<ActorProcess>();
 
-    
     public void addProcess(ActorProcess p)
     {
         toAdd.push(p);
         p.setOwner(this);
     }
-    /**
-     * Act - do whatever the AnimatedActor wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
+
     public void act() 
     {
         // Add new processes
