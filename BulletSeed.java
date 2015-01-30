@@ -9,6 +9,9 @@ import java.awt.geom.Point2D;
  */
 public class BulletSeed extends Projectile
 {
+    public BulletSeed() {
+         this.setImage("images/rock2.png");
+    }
     /**
      * Act - do whatever the BulletSeed wants to do. This method is called whenever
      * the 'Act' or 'Run' button gets pressed in the environment.

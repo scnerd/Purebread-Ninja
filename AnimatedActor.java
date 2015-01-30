@@ -13,8 +13,6 @@ import java.util.Arrays;
  */
 public abstract class AnimatedActor extends Actor
 {
-    
-   
     private LinkedList<ActorProcess> processes = new LinkedList<ActorProcess>();
     private LinkedList<ActorProcess> toAdd = new LinkedList<ActorProcess>();
 
