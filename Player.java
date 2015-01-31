@@ -86,10 +86,10 @@ public class Player extends Character
     public void addedToWorld(World world)
     {
         super.addedToWorld(world);
-        if (Map.class.isAssignableFrom(world.getClass()))
+        if (CameraViewableWorld.class.isAssignableFrom(world.getClass()))
         {
-            ((Map)world).player = this;
-            this.addProcess(new CameraFollowProcess((Map) this.getWorld()));
+            //((CameraViewableWorld)world).player = this;
+            this.addProcess(new CameraFollowProcess((CameraViewableWorld) world));
         }
     }
 }

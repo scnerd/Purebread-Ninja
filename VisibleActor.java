@@ -8,17 +8,16 @@ import greenfoot.*;
  */
 public abstract class VisibleActor extends Actor
 {
-    protected Map map;
+    private CameraViewableWorld world;
     private int worldX;
     private int worldY;
 
     @Override
     public void addedToWorld(World world)
     {
-        if (Map.class.isAssignableFrom(world.getClass()))
-        {
-            this.map = (Map)world;
-        }
+        this.world = (CameraViewableWorld) world;
+        this.worldX = super.getX();
+        this.worldY = super.getY();
         
     }
     
@@ -35,11 +34,11 @@ public abstract class VisibleActor extends Actor
     }
     
     @Override
-    public void setLocation(int x, int y)
+    public final void setLocation(int x, int y)
     {
-        if (map != null)
+        if (world != null)
         {
-            super.setLocation( x - map.camX + map.getWidth()/2, y -  map.camY + map.getHeight()/2);
+            super.setLocation(x - world.getCameraX() + world.getWidth()/2, y -  world.getCameraY() + world.getHeight()/2);
         }
         else
         {
@@ -47,6 +46,5 @@ public abstract class VisibleActor extends Actor
         }
         this.worldX = x;
         this.worldY = y;
-  
     }
 }

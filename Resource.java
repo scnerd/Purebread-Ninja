@@ -1,4 +1,5 @@
 import greenfoot.*;
+import greenfoot.util.GreenfootUtil;
 
 import java.awt.Point;
 import java.awt.Dimension;
@@ -6,7 +7,9 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import java.io.StringWriter;
-import java.io.FileReader;
+import java.io.InputStream;
+
+import java.net.URL;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -14,11 +17,12 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Resource {
-   public static String loadLevel(String fileName) {
-      FileReader in = null;
+   public static String loadString(String fileName) {
+      InputStream in = null;
       try {
          try {
-            in = new FileReader(fileName);
+            URL url = GreenfootUtil.getURL(fileName, "");
+            in = url.openStream();
             Scanner scan = new Scanner(in);
             StringWriter buf = new StringWriter();
             while (scan.hasNextLine()) {
@@ -34,6 +38,29 @@ public class Resource {
          throw new RuntimeException(e);
       }
    }
+   
+    public static String loadLevel(String dir)
+    {
+       InputStream in = null;
+        try {
+            try {
+                URL url = GreenfootUtil.getURL("level", "levels/" + dir);
+                in = url.openStream();
+                Scanner scan = new Scanner(in);
+                StringWriter buf = new StringWriter();
+                while (scan.hasNextLine()) {
+                   buf.append(scan.nextLine());
+                   buf.append('\n');
+                }
+                return buf.toString();
+            } finally {
+                if (in != null)
+                    in.close();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
    
     public static GreenfootImage[] loadSpriteFrames(String imgFile, int width, int height, double scale)
     {

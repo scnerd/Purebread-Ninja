@@ -6,16 +6,18 @@
  */
 public class CameraFollowProcess extends ActorProcess 
 {
-    Map map;
+    CameraViewableWorld world;
+    int count;
+    int waitFrames = 2;
 
-    public CameraFollowProcess(Map map)
+    public CameraFollowProcess(CameraViewableWorld world)
     {
-        this.map = map;
+        this.world = world;
     }
     
     public void run()
     {
-        map.setCameraLocation(this.owner.getX(), this.owner.getY());
+        this.world.setCameraLocation(this.owner.getX(), this.owner.getY());
     }
         
 }
