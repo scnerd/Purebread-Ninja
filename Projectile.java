@@ -1,5 +1,6 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 import java.awt.geom.Point2D;
+import static purebreadninja.Sprite.*;
 
 /**
  * Write a description of class Projectile here.
@@ -10,27 +11,53 @@ import java.awt.geom.Point2D;
 public class Projectile extends AnimatedActor
 {
     protected static final double BULLET_VELOCITY = 5;
-    
-    protected double angle;
+    protected Point2D.Double velocity = new Point2D.Double();
     protected Point2D.Double position;
     
-    public Projectile(Point2D.Double position, double angle)
+    private boolean isFlying = true;
+    private int deathDisplayDuration = 10;
+    private static GreenfootImage deathImage = new GreenfootImage("images/boom.png");
+    public Projectile(double theta)
     {
-        this.position = position;
-        this.angle = angle;
+        velocity.x = BULLET_VELOCITY*Math.cos(theta);
+        velocity.y = BULLET_VELOCITY*Math.sin(theta);
     }
     
     public void act()
     {
-        updatePosition();
-        checkCollisions();
+        if (isFlying)
+        {
+            super.act();
+            updatePosition();
+            checkCollisions();
+
+        }
+        else
+        {
+            if (--deathDisplayDuration == 0)
+            {
+                getWorld().removeObject(this);
+            }
+        }
+
+    }
+    
+    @Override
+    public void addedToWorld(World world)
+    {
+        super.addedToWorld(world);
+        
+        if(position == null)
+        {
+            position = new Point2D.Double(getX(), getY());
+        }
     }
     
     protected void updatePosition()
     {
-        position.x += BULLET_VELOCITY * Math.cos(angle);
-        position.y += BULLET_VELOCITY * Math.sin(angle);
-        setLocation((int)position.x, (int)position.y);
+        position.x += velocity.x;
+        position.y += velocity.y;
+        setLocation((int)Math.round(position.x), Math.round((int)position.y));
     }
     
     protected void checkCollisions()
@@ -38,12 +65,16 @@ public class Projectile extends AnimatedActor
         Actor intersects = null;
         if((intersects = getOneIntersectingObject(Player.class)) != null)
         {
+            isFlying = false;
             ((Player)intersects).damage(this);
-            getWorld().removeObject(this);
+            setImage(deathImage);
+            
         }
         else if((intersects = getOneIntersectingObject(Platform.class)) != null)
         {
-            getWorld().removeObject(this);
+            isFlying = false;
+            setImage(deathImage);
+
         }
     }
 }

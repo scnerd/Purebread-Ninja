@@ -55,7 +55,9 @@ public class Player extends Character
     @Override
     public void damage(Actor fromActor)
     {
-        this.health -= 1;
+        if (--health == 0)
+            Greenfoot.setWorld(new Menu());
+        
     }
 
     @Override
