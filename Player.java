@@ -1,68 +1,33 @@
 import greenfoot.*;
-import java.util.List;
+import purebreadninja.*;
+import static purebreadninja.CharacterAction.*;
+import static purebreadninja.Command.*;
+import static purebreadninja.Sprite.*;
+
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 
-/**
- * Write a description of class Player here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
+
 public class Player extends Character
 {
-    protected CommandInterpreter controller;
-    protected SpriteAnimation animation;
-    protected GreenfootImage[][] standFrames;
-    protected GreenfootImage[] leftStandFrames;
+    @Animates(IDLE)
+    @DefaultAnimation
+    public Sprite idle = ImageSheet("images/player/standing.png");
     
-    public Player()
-    {
-        animationFileNameRoot = "bread_ninja";
-        movingFloorFile = movingAirFile = movingWallFile = movingCeilingFile = attackingFile = grapplingFile = null;
-        
-        this.setImage("bread.png");
-        this.standFrames = new GreenfootImage[2][];
-        this.standFrames[0] = Resource.loadSpriteFrames("BreadNinjaSpriteSmall.png", 39, 32, 1);
-        this.standFrames[1] = SpriteAnimation.flipFrames(this.standFrames[0]);
-        this.animation = new SpriteAnimation(standFrames[0]);
-        this.addProcess(this.animation);
-        this.controller = new KeyboardInterpreter();
-        this.addProcess(new PlayerPositionProcess());
-        
-        loadSpriteSheets();
-    }
+    @Animates(MOVING_FLOOR)
+    public Sprite running = ImageSheet("images/player/running.png");
     
-    public CommandInterpreter getController()
-    {
-        return controller;
-    }
+    @Animates(MOVING_AIR)
+    public Sprite jumping = ImageSheet("images/player/jumping.png");
     
-    public void faceLeft()
-    {
-        this.animation.setAnimation(this.standFrames[1], true);        
-    }
-
-    public void faceRight()
-    {
-        this.animation.setAnimation(this.standFrames[0], true);
-        
-    }
-    
-    public void damage(Actor harmer)
-    {
-        this.health -= 1;
-    }
-
+    public static final Point2D.Double MAX_VELOCITY = new Point2D.Double(3, 6);
     public int health = 5;
+    protected CommandInterpreter controller;
     private Point2D.Double acceleration;
     private int direction = 1;
     private boolean usedUp = false;
     private GrapplingHook hook = null;
-    
-    Point2D.Double MAX_VELOCITY = new Point2D.Double(3, 6);
     
     private double ACC_GRAVITY = 0.25;
     private double ACC_GROUND_JUMP = 4.5;
@@ -78,19 +43,32 @@ public class Player extends Character
     private double SLOWEST_SLIDE = 1;
     
     private double GRAPPLE_SPEED = 2.5;
+    
+    public Player() {}
+    
+    @Override
+    public void damage(Actor fromActor)
+    {
+        this.health -= 1;
+    }
 
-    /**
-     * Act - do whatever the Player wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
+    @Override
+    public void addedToWorld(World world)
+    {
+        super.addedToWorld(world);
+
+        
+        if (controller == null)
+        {
+            this.controller = new KeyboardInterpreter();
+        }
+    }
+    
+    @Override
     public void act() 
     {
-        if(position == null)
-        {
-            position = new Point2D.Double(getX(), getY());
-        }
         enactMovement();
-        if(keyboardGrapple())
+        if(controller.check(GRAPPLE))
         {
             enactGrapple();
         }
@@ -100,25 +78,27 @@ public class Player extends Character
         }
         finalizeMovement();
         flipFrames = direction == -1;
+        
+        if (velocity.x != 0 && isOnGround())
+        {
+            currentAction = MOVING_FLOOR;
+        }
+        else if (isOnCeiling())
+        {
+            currentAction = velocity.x != 0 ? MOVING_CEILING : IDLE_CEILING;
+        }
+        else
+        {
+            
+        }
+        
         super.act();
     }
 
-    private boolean keyboardLeft()
-    { return Greenfoot.isKeyDown("a") || Greenfoot.isKeyDown("left"); }
-
-    private boolean keyboardRight()
-    { return Greenfoot.isKeyDown("d") || Greenfoot.isKeyDown("right"); }
-
-    private boolean keyboardUp()
-    { return Greenfoot.isKeyDown("w") || Greenfoot.isKeyDown("up") || Greenfoot.isKeyDown("space"); }
-    
-    private boolean keyboardGrapple()
-    { return Greenfoot.isKeyDown("shift"); }
-
     private HashSet groundTiles()
     {
-        int leftX = -getImage().getWidth() / 2 + COLLISION_MARGIN;
-        int rightX = getImage().getWidth() / 2 - COLLISION_MARGIN;
+        int leftX = -getImage().getWidth() / 2 + collisionMargin;
+        int rightX = getImage().getWidth() / 2 - collisionMargin;
         int down = getImage().getHeight() / 2;
 
         HashSet toReturn = new HashSet();
@@ -135,8 +115,8 @@ public class Player extends Character
     private HashSet rightWallTiles()
     {
         int rightX = getImage().getWidth() / 2;
-        int downY = getImage().getHeight() / 2 - COLLISION_MARGIN;
-        int upY = -getImage().getHeight() / 2 + COLLISION_MARGIN;
+        int downY = getImage().getHeight() / 2 - collisionMargin;
+        int upY = -getImage().getHeight() / 2 + collisionMargin;
 
         HashSet toReturn = new HashSet();
         toReturn.addAll(getObjectsAtOffset(rightX, downY, Platform.class));
@@ -147,8 +127,8 @@ public class Player extends Character
     private HashSet leftWallTiles()
     {
         int leftX = -getImage().getWidth() / 2 - 1;
-        int downY = getImage().getHeight() / 2 - COLLISION_MARGIN;
-        int upY = -getImage().getHeight() / 2 + COLLISION_MARGIN;
+        int downY = getImage().getHeight() / 2 - collisionMargin;
+        int upY = -getImage().getHeight() / 2 + collisionMargin;
 
         HashSet toReturn = new HashSet();
         toReturn.addAll(getObjectsAtOffset(leftX, downY, Platform.class));
@@ -181,8 +161,8 @@ public class Player extends Character
 
     private HashSet ceilingTiles()
     {
-        int leftX = -getImage().getWidth() / 2 + COLLISION_MARGIN;
-        int rightX = getImage().getWidth() / 2 - COLLISION_MARGIN;
+        int leftX = -getImage().getWidth() / 2 + collisionMargin;
+        int rightX = getImage().getWidth() / 2 - collisionMargin;
         int up = -getImage().getHeight() / 2 - 1;
 
         HashSet toReturn = new HashSet();
@@ -198,28 +178,34 @@ public class Player extends Character
 
     private void enactMovement()
     {
+        if(position == null)
+        {
+            position = new Point2D.Double(getX(), getY());
+        }
         // Calculate accelerations
         acceleration = new Point2D.Double(0, 0);
         // - Gravity
         acceleration.y += ACC_GRAVITY;
 
         // - Horizontal movement
-        if(keyboardLeft() || keyboardRight()) 
+        if(controller.check(LEFT) || controller.check(RIGHT)) 
         {
             if(isOnGround())
             {
-                if(keyboardLeft() && keyboardRight())
+                currentAction = MOVING_FLOOR;
+                if(controller.check(LEFT) && controller.check(RIGHT))
                 { }
-                else if(keyboardLeft())
+                else if(controller.check(LEFT))
                 { acceleration.x -= ACC_MOVEMENT_GROUND; }
-                else if(keyboardRight())
+                else if(controller.check(RIGHT))
                 { acceleration.x += ACC_MOVEMENT_GROUND; }
             }
-            else if(isOnWall() && !(isOnCeiling() && keyboardUp()))
+            else if(isOnWall() && !(isOnCeiling() && controller.check(UP)))
             {
-                if(keyboardLeft() && keyboardRight())
+                currentAction = MOVING_WALL;
+                if(controller.check(LEFT) && controller.check(RIGHT))
                 { }
-                else if((keyboardLeft() && isOnLeftWall()) || (keyboardRight() && isOnRightWall()))
+                else if((controller.check(LEFT) && isOnLeftWall()) || (controller.check(RIGHT) && isOnRightWall()))
                 { 
                     if(velocity.y < SLOWEST_SLIDE)
                         acceleration.y = Math.min(acceleration.y, SLOWEST_SLIDE - velocity.y);
@@ -229,11 +215,12 @@ public class Player extends Character
             }
             else
             {
-                if(keyboardLeft() && keyboardRight())
+                currentAction = MOVING_AIR;
+                if(controller.check(LEFT) && controller.check(RIGHT))
                 { }
-                else if(keyboardLeft())
+                else if(controller.check(LEFT))
                 { acceleration.x -= ACC_MOVEMENT_AIR; }
-                else if(keyboardRight())
+                else if(controller.check(RIGHT))
                 { acceleration.x += ACC_MOVEMENT_AIR; }
             }
         }
@@ -247,7 +234,7 @@ public class Player extends Character
         }
 
         // - Jumping
-        if(keyboardUp())
+        if(controller.check(UP))
         {
             if(isOnCeiling())
             {
@@ -277,7 +264,7 @@ public class Player extends Character
             }
             usedUp = true;
         }
-        else if(!keyboardUp())
+        else if(!controller.check(UP))
         {
             usedUp = false;
         }
@@ -327,6 +314,8 @@ public class Player extends Character
     }
     
     public Actor publicGetOneObjectAtOffset(int dx, int dy, java.lang.Class cls)
-    { return this.getOneObjectAtOffset(dx, dy, cls); }
+    {
+        return this.getOneObjectAtOffset(dx, dy, cls);
+    }
    
 }

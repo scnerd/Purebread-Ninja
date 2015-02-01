@@ -10,6 +10,5 @@ public class ButterRonin extends Enemy
     public ButterRonin()
     {
         this.setImage("images/chips-1.png");
-        this.addProcess(new BulletSeedSpawnProcess());
     }  
 }

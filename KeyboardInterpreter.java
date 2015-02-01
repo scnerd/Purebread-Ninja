@@ -1,44 +1,32 @@
 import greenfoot.*;
+
+import purebreadninja.Command;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Arrays;
 
 public class KeyboardInterpreter implements CommandInterpreter 
 {
-    private HashMap<CommandInterpreter.Command, ArrayList<String>> keyBindings;
+    private HashMap<Command, ArrayList<String>> keyBindings;
     
     public KeyboardInterpreter()
     {
-        this.keyBindings = new HashMap<CommandInterpreter.Command, ArrayList<String>>();
-        for (CommandInterpreter.Command cmd : Command.values())
+        this.keyBindings = new HashMap<Command, ArrayList<String>>();
+        for (Command cmd : Command.values())
         {
             this.keyBindings.put(cmd, new ArrayList<String>());
         }
         loadDefaults();
     }
     
-    public void bind(CommandInterpreter.Command cmd, String key) {
+    public void bind(Command cmd, String key) {
         unbind(key);
         keyBindings.get(cmd).add(key);
     }
     
-    public boolean commandLeft()
-    {
-        return checkCommandKeys(Command.LEFT);
-    }
-    
-    public boolean commandRight()
-    {
-        return checkCommandKeys(Command.RIGHT);
-    }
-    
-    public boolean commandUp()
-    {
-        return checkCommandKeys(Command.UP);
-    }
-    
     public void unbind(String key) {
-        for (CommandInterpreter.Command cmd : Command.values())
+        for (Command cmd : Command.values())
         {
             ArrayList<String> list = keyBindings.get(cmd);
             list.remove(key);
@@ -53,13 +41,13 @@ public class KeyboardInterpreter implements CommandInterpreter
     }
     
     public void clearKeyBindings() {
-        for (CommandInterpreter.Command cmd : Command.values())
+        for (Command cmd : Command.values())
         {
             keyBindings.get(cmd).clear();
         }
     }
     
-    private boolean checkCommandKeys(CommandInterpreter.Command cmd)
+    public boolean check(Command cmd)
     {
         for (String key : keyBindings.get(cmd))
         {

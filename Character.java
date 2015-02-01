@@ -1,5 +1,9 @@
 import greenfoot.*;
+import purebreadninja.*;
+
 import java.awt.geom.Point2D;
+
+import java.lang.reflect.Field;
 
 /**
  * Write a description of class Character here.
@@ -9,124 +13,91 @@ import java.awt.geom.Point2D;
  */
 public abstract class Character extends AnimatedActor
 {
-    private enum CharacterState
-    {
-        IDLE,
-        MOVING_FLOOR,
-        MOVING_AIR,
-        MOVING_WALL,
-        MOVING_CEILING,
-        ATTACKING,
-        GRAPPLING
-    }
+    public static final int DEFAULT_COLLISION_MARGIN = 2;
     
-    private CharacterState previousState = CharacterState.IDLE;
-    protected CharacterState state = CharacterState.IDLE;
-    public CharacterState getState() { return state; }
-    
-    protected static String animationFileNameRoot = "";
-    
-    // Will contain the animations for each state
-    protected static SpriteAnimation
-    idleAnimation,
-    movingFloorAnimation,
-    movingAirAnimation,
-    movingWallAnimation,
-    movingCeilingAnimation,
-    attackingAnimation,
-    grapplingAnimation;
-    
-    // Determines the filename suffix associated with each sprite sheet
-    protected static String 
-    idleFile = "idle",
-    movingFloorFile = "moving_floor",
-    movingAirFile = "moving_air",
-    movingWallFile = "moving_wall",
-    movingCeilingFile = "moving_ceiling",
-    attackingFile = "attacking",
-    grapplingFile = "grappling";
-    
-    // Determines the number of frames in each animation
-    protected static int
-    idleCount = 8,
-    movingFloorCount = 8,
-    movingAirCount = 8,
-    movingWallCount = 8,
-    movingCeilingCount = 8,
-    attackingCount = 8,
-    grapplingCount = 8,
-    frameCount = 4;
-    
+    protected int collisionMargin = DEFAULT_COLLISION_MARGIN;
     protected Point2D.Double position = null;
     protected Point2D.Double velocity = new Point2D.Double(0, 0);
-
-    protected int COLLISION_MARGIN = 2;
+    protected CharacterAction currentAction = CharacterAction.IDLE;   
+    private CharacterAction previousAction = CharacterAction.IDLE;
+    private SpriteAnimation[] animations = new SpriteAnimation[CharacterAction.values().length];
     
-    private String getSpriteSheetFileName(String file)
-    { return String.format("%s_%s.png", animationFileNameRoot, file); }
+    public Character()
+    {
+
+    }
+    
+    @Override
+    public void addedToWorld(World world)
+    {
+        loadSpriteSheets();
+        setCurrentAnimation(animations[currentAction.ordinal()]);
+
+    }
     
     protected void loadSpriteSheets()
     {
-        if(idleFile != null)
-            idleAnimation = new SpriteAnimation(getSpriteSheetFileName(idleFile), idleCount, frameCount);
-        if(movingFloorFile != null)
-            movingFloorAnimation = new SpriteAnimation(getSpriteSheetFileName(movingFloorFile), movingFloorCount, frameCount);
-        if(movingAirFile != null)
-            movingAirAnimation = new SpriteAnimation(getSpriteSheetFileName(movingAirFile), movingAirCount, frameCount);
-        if(movingWallFile != null)
-            movingWallAnimation = new SpriteAnimation(getSpriteSheetFileName(movingWallFile), movingWallCount, frameCount);
-        if(movingCeilingFile != null)
-            movingCeilingAnimation = new SpriteAnimation(getSpriteSheetFileName(movingCeilingFile), movingCeilingCount, frameCount);
-        if(attackingFile != null)
-            attackingAnimation = new SpriteAnimation(getSpriteSheetFileName(attackingFile), attackingCount, frameCount);
-        if(grapplingFile != null)
-            grapplingAnimation = new SpriteAnimation(getSpriteSheetFileName(grapplingFile), movingFloorCount, frameCount);
-        setCurrentAnimation(idleAnimation);
+        Field[] fields = this.getClass().getFields();
+        for (Field field : fields)
+        {
+            DefaultAnimation d = field.getAnnotation(DefaultAnimation.class);
+            if (d != null)
+            {
+                try
+                {
+                    for (CharacterAction a : CharacterAction.values())
+                    {
+                        animations[a.ordinal()] = (SpriteAnimation) field.get(this);
+                    }
+                    break;
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                    throw new RuntimeException(e.getCause());
+                    
+                }
+
+            }
+        }
+        
+        for (Field field : fields)
+        {
+            Animates action = field.getAnnotation(Animates.class);
+            if (action != null)
+            {
+                
+                try
+                {
+                    animations[action.value().ordinal()] = (SpriteAnimation) field.get(this);
+                }
+                catch (Exception e)
+                {
+                    throw new RuntimeException(e.getCause());
+                }
+            }
+        }
+        
     }
     
     public void act()
     {
-        if(state != previousState)
+        if(currentAction != previousAction)
         {
-            SpriteAnimation newAnimation = selectAnimation(state);
+            SpriteAnimation newAnimation = animations[currentAction.ordinal()];
             if(newAnimation != currentAnimation)
             {
                 setCurrentAnimation(newAnimation);
             }
         }
-        previousState = state;
+        previousAction = currentAction;
         super.act();
     }
     
-    private SpriteAnimation selectAnimation(CharacterState curState)
-    {
-        switch(curState)
-        {
-            case IDLE: return idleAnimation;
-            case MOVING_FLOOR: return movingFloorAnimation != null ?
-            movingFloorAnimation :
-            selectAnimation(CharacterState.IDLE);
-            case MOVING_AIR: return movingFloorAnimation != null ?
-            movingAirAnimation :
-            selectAnimation(CharacterState.MOVING_FLOOR);
-            case MOVING_WALL: return movingFloorAnimation != null ?
-            movingWallAnimation :
-            selectAnimation(CharacterState.MOVING_FLOOR);
-            case MOVING_CEILING: return movingFloorAnimation != null ?
-            movingCeilingAnimation :
-            selectAnimation(CharacterState.MOVING_FLOOR);
-            case ATTACKING: return movingFloorAnimation != null ?
-            attackingAnimation :
-            selectAnimation(CharacterState.IDLE);
-            case GRAPPLING: return movingFloorAnimation != null ?
-            grapplingAnimation :
-            selectAnimation(CharacterState.MOVING_AIR);
-        }
-        return null;
-    }
-    
     private int sign(double n)
-    { return n < 0 ? -1 : 1; }  
+    {
+        return n < 0 ? -1 : 1;
+    }  
 
     protected double stepX(double velocity)
     {
@@ -138,8 +109,8 @@ public abstract class Character extends AnimatedActor
         Math.max(-1, Map.pointToGrid(front + velocity, position.y).x - 1) : 
         Math.min(Map.levelWidth, Map.pointToGrid(front + velocity, position.y).x + 1);
         
-        int top_tile = Map.pointToGrid(front, position.y + COLLISION_MARGIN - getImage().getHeight() / 2).y;
-        int bottom_tile = Map.pointToGrid(front, position.y - COLLISION_MARGIN + getImage().getHeight() / 2).y;
+        int top_tile = Map.pointToGrid(front, position.y + collisionMargin - getImage().getHeight() / 2).y;
+        int bottom_tile = Map.pointToGrid(front, position.y - collisionMargin + getImage().getHeight() / 2).y;
         
         Platform collide = null;
         
@@ -177,8 +148,8 @@ public abstract class Character extends AnimatedActor
         Math.max(-1, Map.pointToGrid(position.x, front + velocity).y - 1) : 
         Math.min(Map.levelHeight, Map.pointToGrid(position.x, front + velocity).y + 1);
         
-        int left_tile = Map.pointToGrid(position.x + COLLISION_MARGIN - getImage().getWidth() / 2, front).x;
-        int right_tile = Map.pointToGrid(position.x - COLLISION_MARGIN + getImage().getWidth() / 2, front).x;
+        int left_tile = Map.pointToGrid(position.x + collisionMargin - getImage().getWidth() / 2, front).x;
+        int right_tile = Map.pointToGrid(position.x - collisionMargin + getImage().getWidth() / 2, front).x;
         
         Platform collide = null;
         
@@ -206,5 +177,5 @@ public abstract class Character extends AnimatedActor
         return velocity;
     }
     
-    public abstract void damage(Actor harmer);
+    public abstract void damage(Actor fromActor);
 }

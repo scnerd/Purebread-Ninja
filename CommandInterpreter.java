@@ -1,3 +1,4 @@
+import purebreadninja.Command;
 /**
  * Write a description of class InputProcess here.
  * 
@@ -6,14 +7,5 @@
  */
 public interface CommandInterpreter
 {
-    public enum Command
-    {
-        LEFT,
-        RIGHT,
-        UP
-    }
-        
-    public boolean commandLeft();
-    public boolean commandRight();
-    public boolean commandUp();
+    public boolean check(Command c);
 }

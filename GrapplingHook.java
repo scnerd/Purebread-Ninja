@@ -2,12 +2,6 @@ import greenfoot.*;
 import java.awt.Color;
 import java.awt.Point;
 
-/**
- * Write a description of class GrapplingHook here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 public class GrapplingHook extends Actor
 {
     private double SPEED = 6;
@@ -58,8 +52,12 @@ public class GrapplingHook extends Actor
     }
     
     public boolean getIsHooked()
-    { return isHooked; }
+    {
+        return isHooked;
+    }
     
     public Point getHookTarget()
-    { return isHooked ? target : null; }
+    {
+        return isHooked ? target : null;
+    }
 }

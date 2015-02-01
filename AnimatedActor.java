@@ -1,8 +1,11 @@
 import greenfoot.*;
-import java.util.LinkedList;
-import java.util.ListIterator;
+import purebreadninja.*;
+
 import java.awt.Point;
 import java.awt.Dimension;
+
+import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.Arrays;
 
 /**
@@ -12,70 +15,39 @@ import java.util.Arrays;
  * @version (a version number or a date)
  */
 public abstract class AnimatedActor extends Actor
-{
-    private final int ANIMATION_SPEED = 3;
-    
-    private int animationIndex = 0;
+{   
     protected SpriteAnimation currentAnimation;
     protected boolean flipFrames = false; // Right, true for Left
+    private int animationIndex;
     
     protected void setCurrentAnimation(SpriteAnimation newAnimation)
     {
+        if (newAnimation == null)
+        {
+            if (getImage() != null)
+            {
+                return;
+            }
+            newAnimation = SpriteAnimation.ERROR_ANIMATION;
+        }
         currentAnimation = newAnimation;
-        animationIndex = 0;
-        displayCurrentFrame();
+        animationIndex = -1;
+        displayImage();
     }
     
+    @Override
     public void act()
     {
-        //performProcesses();
-        animationIndex = ++animationIndex % currentAnimation.length();
-        displayCurrentFrame();
+        displayImage();
     }
     
-    private void displayCurrentFrame()
+    public void displayImage()
     {
-        GreenfootImage newFrame = currentAnimation.getFrame(animationIndex, flipFrames);
-        setImage(newFrame);
-    }
-    
-    private LinkedList<ActorProcess> processes = new LinkedList<ActorProcess>();
-    private LinkedList<ActorProcess> toAdd = new LinkedList<ActorProcess>();
-
-    public void addProcess(ActorProcess p)
-    {
-        toAdd.push(p);
-        p.setOwner(this);
-    }
-
-    private void performProcesses() 
-    {
-        // Add new processes
-        processes.addAll(toAdd);
-        toAdd.clear();
-
-        // Update processes
-        ListIterator<ActorProcess> itr = processes.listIterator();
-        while(itr.hasNext())
+        GreenfootImage frame = currentAnimation.getFrame(++animationIndex % currentAnimation.length(), flipFrames);
+        if (frame != this.getImage())
         {
-            ActorProcess p = itr.next();
-            if (!p.isDone())
-            {
-                p.update();
-            }
-            
-            if (p.isDone())
-            {
-                if(p.hasChild())
-                {
-                    itr.set(p.getChild());
-                }
-                else
-                {
-                    itr.remove();
-                }
-            }
-                
+            // This method is slow
+            this.setImage(frame);
         }
     }
 }

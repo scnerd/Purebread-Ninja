@@ -9,7 +9,9 @@ import java.awt.Point;
  */
 public class Platform extends Actor
 {
-    public Platform() {
+    public Platform()
+    {
+        this.setImage("images/brick.jpg");
     }
     
     public int left()

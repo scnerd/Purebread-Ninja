@@ -70,11 +70,22 @@ public class Map extends World
                     if(type != null)
                     {
                         try {
-                            this.addObject(type.getConstructor().newInstance(), loc.x, loc.y);
-                        } catch(Exception ex) {
+                            try
+                            {
+                                this.addObject(type.getConstructor().newInstance(), loc.x, loc.y);
+                            }
+                            catch (InvocationTargetException e)
+                            {
+
+                                e.printStackTrace();
+                                throw e.getTargetException();
+                            }
+                        } catch(Throwable ex) {
                             String msg = String.format("Construction failed at (%d, %d) with exception %s", col, row, ex.toString());
                             showText(msg, getWidth() / 2, getHeight() / 2);
-                            return false;
+                            ex.printStackTrace();
+                            throw new RuntimeException(msg);
+                            //return false;
                         }
                     }
                 }
