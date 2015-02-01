@@ -40,8 +40,8 @@ public abstract class Character extends AnimatedActor
         Field[] fields = this.getClass().getFields();
         for (Field field : fields)
         {
-            DefaultAnimation d = field.getAnnotation(DefaultAnimation.class);
-            if (d != null)
+            DefaultAnimation catchAll = field.getAnnotation(DefaultAnimation.class);
+            if (catchAll != null)
             {
                 try
                 {

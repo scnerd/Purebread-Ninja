@@ -44,6 +44,12 @@ public class Player extends Character
     
     private double GRAPPLE_SPEED = 2.5;
     
+    private boolean onGround;
+    private boolean onLeftWall;
+    private boolean onRightWall;
+    private boolean onWall;
+    private boolean onCeiling;
+    
     public Player() {}
     
     @Override
@@ -56,7 +62,11 @@ public class Player extends Character
     public void addedToWorld(World world)
     {
         super.addedToWorld(world);
-
+        
+        if(position == null)
+        {
+            position = new Point2D.Double(getX(), getY());
+        }
         
         if (controller == null)
         {
@@ -67,32 +77,48 @@ public class Player extends Character
     @Override
     public void act() 
     {
-        enactMovement();
+        updateOnTouchBooleans();
+        updatePosition();
         if(controller.check(GRAPPLE))
         {
-            enactGrapple();
+            triggerGrapple();
         }
         else
         {
-            if(hook != null) { this.getWorld().removeObject(hook); hook = null; }
+            if(hook != null)
+            {
+                this.getWorld().removeObject(hook);
+                hook = null;
+            }
         }
         finalizeMovement();
         flipFrames = direction == -1;
+        updateOnTouchBooleans();
         
-        if (velocity.x != 0 && isOnGround())
+        if (velocity.x != 0 && onGround)
         {
             currentAction = MOVING_FLOOR;
         }
-        else if (isOnCeiling())
+
+        else if (velocity.x == 0 && onGround)
         {
-            currentAction = velocity.x != 0 ? MOVING_CEILING : IDLE_CEILING;
+            currentAction = IDLE;
         }
-        else
+        else if (!onGround)
         {
-            
+            currentAction = MOVING_AIR;
         }
         
         super.act();
+    }
+    
+    private void updateOnTouchBooleans()
+    {
+        onGround = groundTiles().size() > 0;
+        onLeftWall = leftWallTiles().size() > 0;
+        onRightWall = rightWallTiles().size() > 0;
+        onWall = onLeftWall || onRightWall;
+        onCeiling = ceilingTiles().size() > 0;
     }
 
     private HashSet groundTiles()
@@ -105,11 +131,6 @@ public class Player extends Character
         toReturn.addAll(getObjectsAtOffset(leftX, down, Platform.class));
         toReturn.addAll(getObjectsAtOffset(rightX, down, Platform.class));
         return toReturn;
-    }
-
-    private boolean isOnGround()
-    {
-        return groundTiles().size() > 0;
     }
 
     private HashSet rightWallTiles()
@@ -144,21 +165,6 @@ public class Player extends Character
         return toReturn;
     }
 
-    private boolean isOnWall()
-    {
-        return wallTiles().size() > 0;
-    }
-
-    private boolean isOnLeftWall()
-    {
-        return leftWallTiles().size() > 0;
-    }
-    
-    private boolean isOnRightWall()
-    {
-        return rightWallTiles().size() > 0;
-    }
-
     private HashSet ceilingTiles()
     {
         int leftX = -getImage().getWidth() / 2 + collisionMargin;
@@ -171,28 +177,18 @@ public class Player extends Character
         return toReturn;
     }
 
-    private boolean isOnCeiling()
+        private void updatePosition()
     {
-        return ceilingTiles().size() > 0;
-    }
-
-    private void enactMovement()
-    {
-        if(position == null)
-        {
-            position = new Point2D.Double(getX(), getY());
-        }
         // Calculate accelerations
         acceleration = new Point2D.Double(0, 0);
         // - Gravity
         acceleration.y += ACC_GRAVITY;
 
-        // - Horizontal movement
+       // - Horizontal movement
         if(controller.check(LEFT) || controller.check(RIGHT)) 
         {
-            if(isOnGround())
+            if(onGround)
             {
-                currentAction = MOVING_FLOOR;
                 if(controller.check(LEFT) && controller.check(RIGHT))
                 { }
                 else if(controller.check(LEFT))
@@ -200,12 +196,11 @@ public class Player extends Character
                 else if(controller.check(RIGHT))
                 { acceleration.x += ACC_MOVEMENT_GROUND; }
             }
-            else if(isOnWall() && !(isOnCeiling() && controller.check(UP)))
+            else if(onWall)
             {
-                currentAction = MOVING_WALL;
                 if(controller.check(LEFT) && controller.check(RIGHT))
                 { }
-                else if((controller.check(LEFT) && isOnLeftWall()) || (controller.check(RIGHT) && isOnRightWall()))
+                else if((controller.check(LEFT) && onLeftWall) || (controller.check(RIGHT) && onRightWall))
                 { 
                     if(velocity.y < SLOWEST_SLIDE)
                         acceleration.y = Math.min(acceleration.y, SLOWEST_SLIDE - velocity.y);
@@ -215,7 +210,6 @@ public class Player extends Character
             }
             else
             {
-                currentAction = MOVING_AIR;
                 if(controller.check(LEFT) && controller.check(RIGHT))
                 { }
                 else if(controller.check(LEFT))
@@ -224,7 +218,7 @@ public class Player extends Character
                 { acceleration.x += ACC_MOVEMENT_AIR; }
             }
         }
-        else if(isOnGround() || isOnCeiling())
+        else if(onGround || onCeiling)
         {
             // Get friction in the correct direction
             acceleration.x += (velocity.x < 0 ? 1 : -1) * ACC_FRICTION;
@@ -236,20 +230,20 @@ public class Player extends Character
         // - Jumping
         if(controller.check(UP))
         {
-            if(isOnCeiling())
+            if(onCeiling)
             {
                 acceleration.y = -velocity.y;
             }
-            else if(isOnGround() && !usedUp)
+            else if(onGround && !usedUp)
             { acceleration.y = -ACC_GROUND_JUMP; }
-            else if(isOnWall() && !usedUp)
+            else if(onWall && !usedUp)
             {
                 int jump_dir = 0;
-                if(isOnLeftWall())
+                if(onLeftWall)
                 {
                     jump_dir = 1;
                 }
-                else if(isOnRightWall())
+                else if(onRightWall)
                 {
                     jump_dir = -1;
                 }
@@ -258,7 +252,7 @@ public class Player extends Character
                     acceleration = new Point2D.Double(jump_dir * ACC_WALL_JUMP_HORZ, -ACC_WALL_JUMP - velocity.y);
                 }
             }
-            else if(!isOnGround() && !isOnWall())
+            else if(!onGround && !onWall)
             {
                 acceleration.y -= ACC_HOLD_JUMP;
             }
@@ -270,22 +264,20 @@ public class Player extends Character
         }
     }
     
-    private void enactGrapple()
+    private void triggerGrapple()
     {
+        
         if(hook == null)
         {
             hook = new GrapplingHook(this, this.direction);
-            this.getWorld().addObject(hook, getX(), getY());
+            getWorld().addObject(hook, getX(), getY());
         }
-        else
+        else if(hook.getIsHooked())
         {
-            if(hook.getIsHooked())
-            {
-                java.awt.Point target = hook.getHookTarget();
-                double angle = Math.atan2(target.y - this.getY(), target.x - this.getX());
-                acceleration.x += GRAPPLE_SPEED * Math.cos(angle);
-                acceleration.y += GRAPPLE_SPEED * Math.sin(angle);
-            }
+            java.awt.Point target = hook.getHookTarget();
+            double angle = Math.atan2(target.y - getY(), target.x - getX());
+            acceleration.x += GRAPPLE_SPEED * Math.cos(angle);
+            acceleration.y += GRAPPLE_SPEED * Math.sin(angle);
         }
     }
     
