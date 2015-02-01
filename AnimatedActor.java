@@ -14,7 +14,7 @@ import java.util.Arrays;
  * @author (your name) 
  * @version (a version number or a date)
  */
-public abstract class AnimatedActor extends Actor
+public abstract class AnimatedActor extends VisibleActor
 {   
     protected SpriteAnimation currentAnimation;
     protected boolean flipFrames = false; // Right, true for Left

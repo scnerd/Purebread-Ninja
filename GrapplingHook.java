@@ -2,7 +2,7 @@ import greenfoot.*;
 import java.awt.Color;
 import java.awt.Point;
 
-public class GrapplingHook extends Actor
+public class GrapplingHook extends AnimatedActor
 {
     private double SPEED = 6;
     private double ANGLE = 60;

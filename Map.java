@@ -8,47 +8,46 @@ import java.awt.Point;
 import java.util.HashMap;
 
 /**
- * Write a description of class Map1 here.
+ * Write a description of class Map here.
  * 
  * @author (your name) 
  * @version (a version number or a date)
  */
-public class Map extends World
+public class Map extends CameraViewableWorld
 {
     /*
      * TODO: Implement camera following
      * TODO: Implement background
      */
-    
     public static int GRID_SIZE = 32;
     public static int levelNumber = 0;
     public static int levelWidth = 0;
     public static int levelHeight = 0;
-    protected static HashMap TYPE_MAPPING = new HashMap<Character, Class<? extends Actor>>();
+    public static final String DEFAULT = "\n\n__ 0    _\n_  _ _   _\n_        _\n_ _   _  _\n_  ___   _\n \n \n                1\n__________________\n";
     
-    /**
-     * Constructor for objects of class Map.
-     * 
-     */
-    public Map()
-    {    
-        // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
-        super(800, 600, 1);
-        
-        if(TYPE_MAPPING.isEmpty())
-        {
-            TYPE_MAPPING.put(' ', null);
-            TYPE_MAPPING.put('_', Platform.class);
-            TYPE_MAPPING.put('0', Player.class);
-            TYPE_MAPPING.put('1', ButterRonin.class);
-            TYPE_MAPPING.put('2', JamFisher.class);
-            TYPE_MAPPING.put('3', HazelShogun.class);
-            TYPE_MAPPING.put('4', PaniniSumoPresser.class);
-        }
-
-        loadLevel(Levels.DEFAULT);
+    protected static HashMap<java.lang.Character, Class<? extends Actor>> TYPE_MAPPING;
+    static {
+        TYPE_MAPPING = new HashMap<java.lang.Character, Class<? extends Actor>>();
+        TYPE_MAPPING.put(' ', null);
+        TYPE_MAPPING.put('_', Platform.class);
+        TYPE_MAPPING.put('0', Player.class);
+        TYPE_MAPPING.put('1', ButterRonin.class);
+        TYPE_MAPPING.put('2', JamFisher.class);
+        TYPE_MAPPING.put('3', HazelShogun.class);
+        TYPE_MAPPING.put('4', PaniniSumoPresser.class);
+    }
+    
+    public Map(String data)
+    {
+        super(800, 600);
+        loadLevel(data);
     }
 
+    public Map()
+    {    
+        this(DEFAULT);
+    }
+    
     private boolean loadLevel(String mapData)
     {
         if(mapData != null)
@@ -76,7 +75,6 @@ public class Map extends World
                             }
                             catch (InvocationTargetException e)
                             {
-
                                 e.printStackTrace();
                                 throw e.getTargetException();
                             }

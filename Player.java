@@ -177,7 +177,7 @@ public class Player extends Character
         return toReturn;
     }
 
-        private void updatePosition()
+    private void updatePosition()
     {
         // Calculate accelerations
         acceleration = new Point2D.Double(0, 0);
@@ -303,6 +303,7 @@ public class Player extends Character
             direction = 1;
 
         setLocation((int)position.x, (int)position.y);
+        this.moveCamera((int)position.x, (int)position.y);
     }
     
     public Actor publicGetOneObjectAtOffset(int dx, int dy, java.lang.Class cls)

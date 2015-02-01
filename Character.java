@@ -30,6 +30,7 @@ public abstract class Character extends AnimatedActor
     @Override
     public void addedToWorld(World world)
     {
+        super.addedToWorld(world);
         loadSpriteSheets();
         setCurrentAnimation(animations[currentAction.ordinal()]);
 
