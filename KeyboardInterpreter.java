@@ -38,6 +38,7 @@ public class KeyboardInterpreter implements CommandInterpreter
         keyBindings.get(Command.LEFT).addAll(Arrays.asList("a", "left"));
         keyBindings.get(Command.RIGHT).addAll(Arrays.asList("d", "right"));
         keyBindings.get(Command.UP).addAll(Arrays.asList("w", "up", "space"));
+        keyBindings.get(Command.GRAPPLE).addAll(Arrays.asList("shift"));
     }
     
     public void clearKeyBindings() {

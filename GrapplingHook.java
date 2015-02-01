@@ -14,24 +14,22 @@ public class GrapplingHook extends Actor
     private boolean isHooked = false;
     private Player parent;
     private Point target = null;
+    private double initialVelocityX;
     
     public GrapplingHook(Player thrower, int direction)
     {
         this.parent = thrower;
         this.direction = direction;
-        target = new Point(parent.getX(), parent.getY());
+        this.target = new Point(parent.getX(), parent.getY());
+        this.initialVelocityX = parent.velocity.x;
     }
     
-    /**
-     * Act - do whatever the GrapplingHook wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
     public void act() 
     {
         int width, height;
         if(!isHooked)
         {
-            target.x += direction * SPEED * Math.cos(ANGLE * Math.PI / 180);
+            target.x += direction * SPEED * Math.cos(ANGLE * Math.PI / 180) + this.initialVelocityX;
             target.y -= SPEED * Math.sin(ANGLE * Math.PI / 180);
             
             if(parent.publicGetOneObjectAtOffset(target.x - parent.getX(),
