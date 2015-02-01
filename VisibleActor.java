@@ -8,7 +8,7 @@ import greenfoot.*;
  */
 public abstract class VisibleActor extends Actor
 {
-    private CameraViewableWorld world;
+    protected CameraViewableWorld world;
     private int worldX;
     private int worldY;
 
