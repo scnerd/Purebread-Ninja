@@ -1,6 +1,6 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 import java.awt.geom.Point2D;
-import static purebreadninja.Sprite.*;
+//import static purebreadninja.Sprite.*;
 
 /**
  * Write a description of class BulletSeed here.
@@ -24,7 +24,7 @@ public class BulletSeed extends Projectile
         // THIS LINE SETS THE LOCATION RELATIVE TO THE CURRENT CAMERA DONT CHANGE
         this.setLocation(getX(), getY());
         setCurrentAnimation(null);
-        setCurrentAnimation(ImageSheet("seed-bullet.png"));
+        setCurrentAnimation(Sprite.ImageSheet("seed-bullet.png"));
         
     }
     
