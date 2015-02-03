@@ -1,19 +1,65 @@
 import greenfoot.*;
+import purebreadninja.*;
+import static purebreadninja.CharacterAction.*;
 
-/**
- * Write a description of class JamFisher here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 public class JamFisher extends Enemy
 {
-    /**
-     * Act - do whatever the JamFisher wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
+    private int alert_wait_time = 100;
+    private int aggresive_wait_time = 200;
+    private int wait_time = 0;
+    private double last_angle = 0;
+    
+    @Animates(IDLE)
+    @DefaultAnimation
+    public Sprite idle = Sprite.ImageSheet("grapes.png");
+    
     public void act() 
     {
-        // Add your action code here.
+        
+        if (playerInRange())
+        {
+            last_angle = getAngleToPlayer();
+            facePlayer();
+            aggresive();
+        }
+        else if (sawPlayer)
+        {
+            alert();
+        }
+        
+        super.act();
     }    
+    
+    private void shootSeed()
+    {
+        try
+        {
+            BulletSeed bullet = new BulletSeed(last_angle);
+            this.getWorld().addObject(bullet, this.getX(), this.getY() - 10);
+        } catch(Exception ex) {}
+    }
+    
+    private void alert()
+    {
+        if (wait_time == alert_wait_time)
+        {
+            shootSeed();
+        }
+        
+        if (wait_time-- < 0) { wait_time = alert_wait_time; }
+    }
+    
+    private void aggresive()
+    {   
+        if (wait_time == aggresive_wait_time)
+        {
+            shootSeed();
+        }
+        else if (wait_time == aggresive_wait_time * (6/8.0))
+        {
+            shootSeed();
+        }
+        
+        if (wait_time-- < 0) { wait_time = aggresive_wait_time; }
+    }
 }

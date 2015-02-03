@@ -1,5 +1,6 @@
 import greenfoot.*;
 import purebreadninja.*;
+import purebreadninja.SpriteAnimation;
 
 import java.awt.Point;
 import java.awt.Dimension;
