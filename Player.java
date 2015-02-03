@@ -12,13 +12,13 @@ public class Player extends Character
 {
     @Animates(IDLE)
     @DefaultAnimation
-    public Sprite idle = Sprite.ImageSheet("images/player/standing.png");
+    public Sprite idle = Sprite.ImageSheet("images/player/running.png");
     
     @Animates(MOVING_FLOOR)
-    public Sprite running = Sprite.ImageSheet("images/player/running.png");
+    public Sprite running = Sprite.ImageSheet("images/player/player_run.png");
     
     @Animates(MOVING_AIR)
-    public Sprite jumping = Sprite.ImageSheet("images/player/jumping.png");
+    public Sprite jumping = Sprite.ImageSheet("images/player/player_air.png");
     
     public static final Point2D.Double MAX_VELOCITY = new Point2D.Double(3, 6);
     public int health = 5;

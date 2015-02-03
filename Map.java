@@ -23,7 +23,7 @@ public class Map extends CameraViewableWorld
     public static int levelNumber = 0;
     public static int levelWidth = 0;
     public static int levelHeight = 0;
-    public static final String DEFAULT = "\n\n__ 0    _\n_  _ _   _\n_        _\n_ _   _  _\n_  ___   _\n \n \n                1\n__________________\n";
+    public static final String DEFAULT = "\n\n__ 0    _\n_  _ _   _\n_        _\n_ _   _  _\n_  ___   _\n \n \n                   1\n  ____________________\n\n                       _\n\n                        _\n\n          2\n _______________________________\n\n                                _\n\n                                _\n\n                    4\n____________________________________________";
     
     protected static HashMap<java.lang.Character, Class<? extends Actor>> TYPE_MAPPING;
     static {

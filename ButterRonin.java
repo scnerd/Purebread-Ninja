@@ -5,31 +5,91 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.lang.reflect.InvocationTargetException;
 
+import static purebreadninja.CharacterAction.*;
+import static purebreadninja.Command.*;
+
 public class ButterRonin extends Enemy
 {
-    private int default_wait_time = 120;
+    private int patrol_wait_time = 400;
+    private int alert_wait_time = 800;
+    private int aggresive_wait_time = 300;
     private int wait_time = 0;
-    public ButterRonin()
-    {
-        this.setImage("images/chips-1.png");
-    }
+    private int initial_direction = -1;
+    private double speed = 1.5;
+    
+    private int cur_state = 0, prev_state = 0;
+    
+    @Animates(IDLE)
+    @DefaultAnimation
+    public Sprite idle = Sprite.ImageSheet("butter_idle.png");
+    
+    @Animates(MOVING_FLOOR)
+    public Sprite running = Sprite.ImageSheet("butter_attack.png");
     
     @Override
     public void act()
+    {   
+        if (playerInRange())
+        {
+            cur_state = 1;
+            aggresive();
+        }
+        else
+        {
+            cur_state = 0;
+            alert();
+        }
+        if (cur_state != prev_state) { wait_time = 0; }
+        prev_state = cur_state;
+        
+        if ((velocity.x < 0 && atLeftEdge()) || (velocity.x > 0 && atRightEdge()))
+        {
+            haultVelocity();
+        }
+        
+        
+        super.act();
+    }
+    
+    private void alert()
     {
-        if (wait_time > 0) {
-            wait_time--;
+        if (wait_time == alert_wait_time)
+        {
+            setVelocity(initial_direction * speed, 0.0);
+            currentAction = MOVING_FLOOR;
         }
-        else {
-            // shoot
-            try
-            {
-                BulletSeed bullet = new BulletSeed(Math.PI);
-                this.getWorld().addObject(bullet, this.getX(), this.getY());
-            } catch(Exception ex)
-            {
-            }
-            wait_time = default_wait_time;
+        else if (wait_time == alert_wait_time * (7/8.0))
+        {
+            haultVelocity();
+            currentAction = IDLE;
         }
+        else if (wait_time == alert_wait_time * (1/2.0))
+        {
+            setVelocity(-initial_direction * speed, 0.0);
+            currentAction = MOVING_FLOOR;
+        }
+        else if (wait_time == alert_wait_time * (3/8.0))
+        {
+            haultVelocity();
+            currentAction = IDLE;
+        }
+        
+        if (wait_time-- < 0) { wait_time = alert_wait_time; }
+    }
+    
+    private void aggresive()
+    {
+        currentAction = MOVING_FLOOR;
+        
+        if (wait_time == aggresive_wait_time)
+        {
+            setVelocity(initial_direction * speed, 0.0);
+        }
+        else if (wait_time == aggresive_wait_time * (1/2.0))
+        {
+            setVelocity(-initial_direction * speed, 0.0);
+        }
+        
+        if (wait_time-- < 0) { wait_time = aggresive_wait_time; }
     }
 }
