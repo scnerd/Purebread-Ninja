@@ -54,6 +54,12 @@ public class Player extends Character
     @Override
     public void damage(Actor fromActor)
     {
+        double knockback_x = 26.0;
+        double knockback_y = 3.0;
+        int direction = fromActor.getX() <= getX() ? 1 : -1;
+        velocity.x = direction * knockback_x;
+        velocity.y = - knockback_y;
+        
         if (--health == 0)
             Greenfoot.setWorld(new Menu());
         

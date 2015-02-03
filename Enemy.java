@@ -12,7 +12,7 @@ public class Enemy extends Character
     
     public static final Point2D.Double MAX_VELOCITY = new Point2D.Double(3, 6);
     private double ACC_GRAVITY = 0.25;
-    private int VISION_RANGE = 300;
+    private int VISION_RANGE = 150;
     
     protected boolean sawPlayer = false;
     
@@ -20,6 +20,7 @@ public class Enemy extends Character
     public void act()
     {
         enactMovement();
+        checkCollisions();
         
         super.act();
     }
@@ -49,8 +50,8 @@ public class Enemy extends Character
         return false;
     }
     
-    // Only gets left or right (pi or 0)
-    protected double getAngleToPlayer()
+    // Only gets left or right (pi or 0), but we *might want real angle
+    public double getAngleToPlayer()
     {
         Player player = (Player)getWorld().getObjects(Player.class).get(0);
         
@@ -62,6 +63,13 @@ public class Enemy extends Character
         {
             return 0;
         }
+    }
+    
+    public boolean isFacingPlayer()
+    {
+        Player player = (Player)getWorld().getObjects(Player.class).get(0);
+        
+        return flipFrames != (player.getX() >= getX());
     }
     
     protected void facePlayer()
@@ -117,5 +125,22 @@ public class Enemy extends Character
         flipFrames = velocity.x < 0 ? true : (velocity.x > 0 ? false : flipFrames);
         
         setLocation((int)position.x, (int)position.y);
+    }
+    
+    protected void checkCollisions()
+    {
+        Actor intersects = null;
+        if((intersects = getOneIntersectingObject(Player.class)) != null)
+        {
+            if (isFacingPlayer())
+            {
+                ((Player)intersects).damage(this);
+            }
+            else
+            {
+                damage(intersects);
+            }
+            //setImage(deathImage);
+        }
     }
 }
