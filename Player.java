@@ -30,6 +30,12 @@ public class Player extends Character
     @Animates(MOVING_CEILING)
     public Sprite climbing = ImageSheet("images/player/climbing.png");
     
+    @Animates(HURT)
+    public Sprite hurt = Sprite.ImageSheet("images/player/hurting.png");
+
+    @Animates(INVULNERABLE)
+    public Sprite invulnerable = Sprite.ImageSheet("images/player/invulnerable.png");
+    
     public static final Point2D.Double MAX_VELOCITY = new Point2D.Double(6, 12);
     public int health = 5;
     protected CommandInterpreter controller;
@@ -53,20 +59,39 @@ public class Player extends Character
     
     private double GRAPPLE_SPEED = 5;
     
+    private int HURT_DISPLAY_DEFAULT = 10;
+    private int INVULNERABLE_DISPLAY_DEFAULT = 40;
+    
     private boolean onGround;
     private boolean onLeftWall;
     private boolean onRightWall;
     private boolean onWall;
     private boolean onCeiling;
+    private boolean isInvulnerable = false;
+    
+    private int hurtDisplayDuration;
+    private int invulnerableDisplayDuration;
     
     public Player() {}
     
     @Override
     public void damage(Actor fromActor)
     {
-        if (--health == 0)
-            Greenfoot.setWorld(new Menu());
-        
+        if (!isInvulnerable)
+        {
+            double knockback_x = 20.0;
+            double knockback_y = 8.0;
+            int direction = fromActor.getX() <= getX() ? 1 : -1;
+            velocity.x = direction * knockback_x;
+            velocity.y = - knockback_y;
+            
+            if (--health == 0)
+                Greenfoot.setWorld(new Menu());
+            
+            isInvulnerable = true;
+            hurtDisplayDuration = HURT_DISPLAY_DEFAULT;
+            invulnerableDisplayDuration = INVULNERABLE_DISPLAY_DEFAULT;
+        }
     }
 
     @Override
@@ -106,7 +131,16 @@ public class Player extends Character
         flipFrames = direction == -1;
         updateOnTouchBooleans();
         
-        if (velocity.x != 0 && onGround)
+        if (hurtDisplayDuration-- >= 0)
+        {
+            currentAction = HURT;
+        }
+        else if (invulnerableDisplayDuration-- >= 0)
+        {
+            currentAction = INVULNERABLE;
+            isInvulnerable = (invulnerableDisplayDuration > 0);
+        }
+        else if (velocity.x != 0 && onGround)
         {
             currentAction = MOVING_FLOOR;
         }
@@ -128,6 +162,8 @@ public class Player extends Character
             else
             { currentAction = MOVING_AIR; }
         }
+        
+        checkCollisions();
         
         super.act();
     }
@@ -326,4 +362,19 @@ public class Player extends Character
         return this.getOneObjectAtOffset(dx, dy, cls);
     }
    
+    protected void checkCollisions()
+    {
+        Enemy enemy = null;
+        if((enemy = (Enemy)getOneIntersectingObject(Enemy.class)) != null)
+        {
+            if (enemy.isVulnerableTo(this))
+            {
+                damage(enemy);
+            }
+            else if (!isInvulnerable)
+            {
+                enemy.damage(this);
+            }
+        }
+    }
 }
