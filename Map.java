@@ -1,10 +1,13 @@
 import greenfoot.*;
+import greenfoot.util.GreenfootUtil;
 import java.lang.NoSuchMethodException;
 import java.lang.InstantiationException;
 import java.lang.IllegalAccessException;
 import java.lang.IllegalArgumentException;
 import java.lang.reflect.InvocationTargetException;
 import java.awt.Point;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -39,6 +42,7 @@ public class Map extends CameraViewableWorld
         TYPE_MAPPING.put('2', JamFisher.class);
         TYPE_MAPPING.put('3', HazelShogun.class);
         TYPE_MAPPING.put('4', PaniniSumoPresser.class);
+        TYPE_MAPPING.put('N', NextLevelTrigger.class);
     }
 
     Properties props;
@@ -149,5 +153,38 @@ public class Map extends CameraViewableWorld
     {
         if(!MUSIC_PLAYING)
         { BACKGROUND_MUSIC.playLoop(); MUSIC_PLAYING = true; }
+    }
+    
+    public World nextWorld()
+    {
+        String nextMap = props.getProperty("next.map");
+        if (nextMap != null)
+        {
+            Properties nextInfo = loadNextWorldProps(nextMap);
+            return new Map(Resource.loadLevel(nextMap), nextInfo);
+        }
+        else
+        {
+            return new Menu();
+        }
+    }
+    
+    private Properties loadNextWorldProps(String worldDir)
+    {
+        Properties info = new Properties();
+        InputStream in = null;
+        try {
+            try {
+                URL url = GreenfootUtil.getURL("level.properties", "levels/" + worldDir);
+                in = url.openStream();
+                info.load(in);
+                return info;
+            } finally {
+                if (in != null)
+                    in.close();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
