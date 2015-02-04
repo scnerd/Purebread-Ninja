@@ -76,4 +76,15 @@ public class PaniniSumoPresser extends Enemy
         
         if (wait_time-- < 0) { wait_time = aggresive_wait_time; }
     }
+    
+    @Override
+    public boolean isVulnerableTo(Actor attacker)
+    {
+        int playerHeight = attacker.getImage().getHeight();
+        int enemyHeight = getImage().getHeight();
+        int lenience = -10;
+
+        // TODO: write better algorithm
+        return ((attacker.getY() + playerHeight/2.0 - lenience) >= (getY() + enemyHeight/2.0));
+    }
 }

@@ -20,6 +20,7 @@ public class Enemy extends Character
     public void act()
     {
         enactMovement();
+        //checkCollisions();
         
         super.act();
     }
@@ -49,8 +50,8 @@ public class Enemy extends Character
         return false;
     }
     
-    // Only gets left or right (pi or 0)
-    protected double getAngleToPlayer()
+    // Only gets left or right (pi or 0), but we *might want real angle
+    public double getAngleToPlayer()
     {
         Player player = (Player)getWorld().getObjects(Player.class).get(0);
         
@@ -62,6 +63,16 @@ public class Enemy extends Character
         {
             return 0;
         }
+    }
+    
+    public boolean isFacingPlayer(Actor player)
+    {
+        return flipFrames != (player.getX() >= getX());
+    }
+    
+    public boolean isVulnerableTo(Actor attacker)
+    {
+        return isFacingPlayer(attacker);
     }
     
     protected void facePlayer()
