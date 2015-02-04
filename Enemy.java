@@ -1,5 +1,6 @@
 import greenfoot.*;
 import java.awt.geom.Point2D;
+import java.util.List;
 
 /**
  * Write a description of class Enemy here.
@@ -12,9 +13,11 @@ public class Enemy extends Character
     
     public static final Point2D.Double MAX_VELOCITY = new Point2D.Double(3, 6);
     private double ACC_GRAVITY = 0.25;
-    private int VISION_RANGE = 300;
+    private int VISION_RANGE = 400;
+    private int PROXIMITY_RANGE = 200;
     
     protected boolean sawPlayer = false;
+    protected boolean engagedPlayer = false;
     
     @Override
     public void act()
@@ -43,10 +46,48 @@ public class Enemy extends Character
     
     protected boolean playerInRange()
     {
-        if (!getObjectsInRange(VISION_RANGE, Player.class).isEmpty())
+        List<Actor> players = getObjectsInRange(VISION_RANGE, Player.class);
+        if (!players.isEmpty())
         {
-            return sawPlayer = true;
+            Player player = (Player)players.get(0);
+            
+            if (isFacingPlayer(player))
+            {
+                int x_dist = Math.abs(getX() - player.getX());
+                int y_dist = Math.abs(getY() - player.getY());
+                
+                // Vision is a cone from 45 to -45 in facing direction
+                if (x_dist >= y_dist)
+                {
+                    return engagedPlayer = sawPlayer = true;
+                }
+            }
         }
+        
+        return false;
+    }
+    
+    protected boolean playerInProximity()
+    {
+        List<Actor> players = getObjectsInRange(PROXIMITY_RANGE, Player.class);
+        if (engagedPlayer && !players.isEmpty())
+        {
+            Player player = (Player)players.get(0);
+            
+            if (!isFacingPlayer(player))
+            {
+                int x_dist = Math.abs(getX() - player.getX());
+                int y_dist = Math.abs(getY() - player.getY());
+                
+                // out of proximity is a cone from 45 to -45 in non-facing direction
+                if (x_dist >= y_dist)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        
         return false;
     }
     

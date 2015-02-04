@@ -4,7 +4,7 @@ import static purebreadninja.CharacterAction.*;
 
 public class JamFisher extends Enemy
 {
-    private int alert_wait_time = 100;
+    private int alert_wait_time = 200;
     private int aggresive_wait_time = 200;
     private int wait_time = 0;
     private double last_angle = 0;
@@ -15,8 +15,7 @@ public class JamFisher extends Enemy
     
     public void act() 
     {
-        
-        if (playerInRange())
+        if (playerInProximity() || playerInRange())
         {
             last_angle = getAngleToPlayer();
             facePlayer();
@@ -24,6 +23,7 @@ public class JamFisher extends Enemy
         }
         else if (sawPlayer)
         {
+            engagedPlayer = false;
             alert();
         }
         
@@ -44,6 +44,11 @@ public class JamFisher extends Enemy
         if (wait_time == alert_wait_time)
         {
             shootSeed();
+        }
+        else if (wait_time == alert_wait_time * (1/2.0))
+        {
+            last_angle = last_angle == 0 ? Math.PI : 0;
+            flipFrames = !flipFrames;
         }
         
         if (wait_time-- < 0) { wait_time = alert_wait_time; }

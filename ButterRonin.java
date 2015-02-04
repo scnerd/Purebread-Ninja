@@ -9,16 +9,18 @@ public class ButterRonin extends Enemy
     private int aggresive_wait_time = 300;
     private int wait_time = 0;
     private int initial_direction = -1;
-    private double speed = 1.5;
+    private double speed = 4.5;
     
     private int cur_state = 0, prev_state = 0;
     
     @Animates(IDLE)
     @DefaultAnimation
     public Sprite idle = Sprite.ImageSheet("chips-1.png");
+    //public Sprite idle = Sprite.ImageSheet("player/standing.png");
     
     @Animates(MOVING_FLOOR)
     public Sprite running = Sprite.ImageSheet("chips-1.png");
+    //public Sprite running = Sprite.ImageSheet("player/running.png");
     
     @Override
     public void act()
