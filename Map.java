@@ -25,6 +25,8 @@ public class Map extends CameraViewableWorld
     public static int levelHeight = 0;
     public static final String DEFAULT = "\n\n__ 0    _\n_  _ _   _\n_        _\n_ _   _  _\n_  ___   _\n \n \n                1\n__________________\n";
     
+    private static boolean MUSIC_PLAYING = false;
+    private static GreenfootSound BACKGROUND_MUSIC = new GreenfootSound("sounds/background_loop.mp3");
     protected static HashMap<java.lang.Character, Class<? extends Actor>> TYPE_MAPPING;
     static {
         TYPE_MAPPING = new HashMap<java.lang.Character, Class<? extends Actor>>();
@@ -124,11 +126,18 @@ public class Map extends CameraViewableWorld
 
     private void startLevel()
     {
-
+        
     }
 
     private void endLevel()
     {
-
+        
+    }
+    
+    @Override
+    public void act()
+    {
+        if(!MUSIC_PLAYING)
+        { BACKGROUND_MUSIC.playLoop(); MUSIC_PLAYING = true; }
     }
 }

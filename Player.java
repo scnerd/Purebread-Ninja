@@ -134,6 +134,7 @@ public class Player extends Character
         finalizeMovement();
         flipFrames = direction == -1;
         updateOnTouchBooleans();
+        checkCollisions();
         
         if (hurtDisplayDuration-- >= 0)
         {
@@ -144,13 +145,12 @@ public class Player extends Character
             currentAction = INVULNERABLE;
             isInvulnerable = (invulnerableDisplayDuration > 0);
         }
-        else if (velocity.x != 0 && onGround)
+        else if(onGround)
         {
-            currentAction = MOVING_FLOOR;
-        }
-        else if (velocity.x == 0 && onGround)
-        {
-            currentAction = IDLE;
+            if(velocity.x != 0)
+            { currentAction = MOVING_FLOOR; }
+            else
+            { currentAction = IDLE; }
         }
         else if (!onGround)
         {
@@ -166,8 +166,6 @@ public class Player extends Character
             else
             { currentAction = MOVING_AIR; }
         }
-        
-        checkCollisions();
         
         super.act();
     }
@@ -185,7 +183,7 @@ public class Player extends Character
     {
         int leftX = -getImage().getWidth() / 2 + collisionMargin;
         int rightX = getImage().getWidth() / 2 - collisionMargin;
-        int down = getImage().getHeight() / 2;
+        int down = getImage().getHeight() / 2 + 1;
 
         HashSet toReturn = new HashSet();
         toReturn.addAll(getObjectsAtOffset(leftX, down, Platform.class));
