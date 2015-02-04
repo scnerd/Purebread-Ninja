@@ -13,28 +13,28 @@ public class Player extends Character
 {
     @Animates(IDLE)
     @DefaultAnimation
-    public Sprite idle = ImageSheet("images/player/standing.png");
+    public Sprite idle = ImageSheet("images/player/standing.png", 8);
     
     @Animates(IDLE_CEILING)
-    public Sprite hanging = ImageSheet("images/player/hanging.png");
+    public Sprite hanging = ImageSheet("images/player/hanging.png", 1);
     
     @Animates(MOVING_FLOOR)
-    public Sprite running = ImageSheet("images/player/running.png");
+    public Sprite running = ImageSheet("images/player/running.png", 6);
     
     @Animates(MOVING_AIR)
-    public Sprite jumping = ImageSheet("images/player/flying.png");
+    public Sprite jumping = ImageSheet("images/player/flying.png", 6);
     
     @Animates(MOVING_WALL)
-    public Sprite flying = ImageSheet("images/player/sliding.png");
+    public Sprite flying = ImageSheet("images/player/sliding.png", 2);
     
     @Animates(MOVING_CEILING)
-    public Sprite climbing = ImageSheet("images/player/climbing.png");
+    public Sprite climbing = ImageSheet("images/player/climbing.png", 6);
     
     @Animates(HURT)
-    public Sprite hurt = Sprite.ImageSheet("images/player/hurting.png");
+    public Sprite hurt = Sprite.ImageSheet("images/player/hurting.png", 4);
 
     @Animates(INVULNERABLE)
-    public Sprite invulnerable = Sprite.ImageSheet("images/player/invulnerable.png");
+    public Sprite invulnerable = Sprite.ImageSheet("images/player/invulnerable.png", 1);
     
     public static final Point2D.Double MAX_VELOCITY = new Point2D.Double(6, 12);
     public int health = 5;
@@ -43,21 +43,22 @@ public class Player extends Character
     private int direction = 1;
     private boolean usedUp = false;
     private GrapplingHook hook = null;
+    private boolean isHookReady = true;
     
-    private double ACC_GRAVITY = 0.5;
-    private double ACC_GROUND_JUMP = 9;
-    private double ACC_HOLD_JUMP = 0.2;
+    private double ACC_GRAVITY = 0.375;
+    private double ACC_GROUND_JUMP = 6.75;
+    private double ACC_HOLD_JUMP = 0.15;
     
-    private double ACC_MOVEMENT_GROUND = 0.8;
-    private double ACC_MOVEMENT_AIR = 0.5;
-    private double ACC_FRICTION = 0.8;
+    private double ACC_MOVEMENT_GROUND = 0.6;
+    private double ACC_MOVEMENT_AIR = 0.375;
+    private double ACC_FRICTION = 0.6;
     
-    private double ACC_WALL_HOLD = 0.4;
-    private double ACC_WALL_JUMP = 9;
-    private double ACC_WALL_JUMP_HORZ = 4;
-    private double SLOWEST_SLIDE = 2;
+    private double ACC_WALL_HOLD = 0.3;
+    private double ACC_WALL_JUMP = 6.75;
+    private double ACC_WALL_JUMP_HORZ = 3;
+    private double SLOWEST_SLIDE = 1.5;
     
-    private double GRAPPLE_SPEED = 5;
+    private double GRAPPLE_SPEED = 3.75;
     
     private int HURT_DISPLAY_DEFAULT = 10;
     private int INVULNERABLE_DISPLAY_DEFAULT = 40;
@@ -86,8 +87,10 @@ public class Player extends Character
             velocity.y = - knockback_y;
             
             if (--health == 0)
-                Greenfoot.setWorld(new Menu());
-            
+            {
+                Map m = (Map)getWorld();
+                Greenfoot.setWorld(new ScreenWorld("images/game_over.png", m.reload()));
+            }
             isInvulnerable = true;
             hurtDisplayDuration = HURT_DISPLAY_DEFAULT;
             invulnerableDisplayDuration = INVULNERABLE_DISPLAY_DEFAULT;
@@ -126,10 +129,12 @@ public class Player extends Character
                 this.getWorld().removeObject(hook);
                 hook = null;
             }
+            isHookReady = true;
         }
         finalizeMovement();
         flipFrames = direction == -1;
         updateOnTouchBooleans();
+        checkCollisions();
         
         if (hurtDisplayDuration-- >= 0)
         {
@@ -140,13 +145,12 @@ public class Player extends Character
             currentAction = INVULNERABLE;
             isInvulnerable = (invulnerableDisplayDuration > 0);
         }
-        else if (velocity.x != 0 && onGround)
+        else if(onGround)
         {
-            currentAction = MOVING_FLOOR;
-        }
-        else if (velocity.x == 0 && onGround)
-        {
-            currentAction = IDLE;
+            if(velocity.x != 0)
+            { currentAction = MOVING_FLOOR; }
+            else
+            { currentAction = IDLE; }
         }
         else if (!onGround)
         {
@@ -162,8 +166,6 @@ public class Player extends Character
             else
             { currentAction = MOVING_AIR; }
         }
-        
-        checkCollisions();
         
         super.act();
     }
@@ -181,7 +183,7 @@ public class Player extends Character
     {
         int leftX = -getImage().getWidth() / 2 + collisionMargin;
         int rightX = getImage().getWidth() / 2 - collisionMargin;
-        int down = getImage().getHeight() / 2;
+        int down = getImage().getHeight() / 2 + 1;
 
         HashSet toReturn = new HashSet();
         toReturn.addAll(getObjectsAtOffset(leftX, down, Platform.class));
@@ -252,7 +254,7 @@ public class Player extends Character
                 else if(controller.check(RIGHT))
                 { acceleration.x += ACC_MOVEMENT_GROUND; }
             }
-            else if((controller.check(LEFT) && onLeftWall) ^ (controller.check(RIGHT) && onRightWall))
+            else if(!onCeiling && (controller.check(LEFT) && onLeftWall) ^ (controller.check(RIGHT) && onRightWall))
             {
                 if(velocity.y < SLOWEST_SLIDE)
                     acceleration.y = Math.min(acceleration.y, SLOWEST_SLIDE - velocity.y);
@@ -283,7 +285,7 @@ public class Player extends Character
         {
             if(onCeiling)
             {
-                acceleration.y = -velocity.y;
+                    acceleration.y = -velocity.y;
             }
             else if(onGround && !usedUp)
             { acceleration.y = -ACC_GROUND_JUMP; }
@@ -318,17 +320,30 @@ public class Player extends Character
     private void triggerGrapple()
     {
         
-        if(hook == null)
+        if(hook == null && isHookReady)
         {
             hook = new GrapplingHook(this, this.direction);
             getWorld().addObject(hook, getX(), getY());
+            isHookReady = false;
         }
-        else if(hook.getIsHooked())
+        else if(hook != null && hook.getIsHooked())
         {
             java.awt.Point target = hook.getHookTarget();
-            double angle = Math.atan2(target.y - getY(), target.x - getX());
-            acceleration.x += GRAPPLE_SPEED * Math.cos(angle);
-            acceleration.y += GRAPPLE_SPEED * Math.sin(angle);
+            Platform platform = hook.platform;
+            double dy = platform.getY() - getY();
+            double dx = platform.getX() - getX();
+            double distance = Math.sqrt(dy*dy + dx*dx);
+            if (distance > 64)
+            {
+                double angle = Math.atan2(dy, dx);
+                acceleration.x += GRAPPLE_SPEED * Math.cos(angle);
+                acceleration.y += GRAPPLE_SPEED * Math.sin(angle);   
+            }
+            else 
+            {
+                this.getWorld().removeObject(hook);
+                hook = null;
+            }
         }
     }
     

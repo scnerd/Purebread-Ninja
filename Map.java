@@ -1,11 +1,15 @@
 import greenfoot.*;
+import greenfoot.util.GreenfootUtil;
 import java.lang.NoSuchMethodException;
 import java.lang.InstantiationException;
 import java.lang.IllegalAccessException;
 import java.lang.IllegalArgumentException;
 import java.lang.reflect.InvocationTargetException;
 import java.awt.Point;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
+import java.util.Properties;
 
 /**
  * Write a description of class Map here.
@@ -25,22 +29,37 @@ public class Map extends CameraViewableWorld
     public static int levelHeight = 0;
     public static final String DEFAULT = "\n\n__ 0    _\n_  _ _   _\n_        _\n_ _   _  _\n_  ___   _\n \n \n                1\n__________________\n";
     
+    private static boolean MUSIC_PLAYING = false;
+    private static GreenfootSound BACKGROUND_MUSIC = new GreenfootSound("sounds/background_loop.mp3");
     protected static HashMap<java.lang.Character, Class<? extends Actor>> TYPE_MAPPING;
     static {
         TYPE_MAPPING = new HashMap<java.lang.Character, Class<? extends Actor>>();
         TYPE_MAPPING.put(' ', null);
         TYPE_MAPPING.put('_', Platform.class);
+        TYPE_MAPPING.put('H', HeatCoil.class);
         TYPE_MAPPING.put('0', Player.class);
         TYPE_MAPPING.put('1', ButterRonin.class);
         TYPE_MAPPING.put('2', JamFisher.class);
         TYPE_MAPPING.put('3', HazelShogun.class);
         TYPE_MAPPING.put('4', PaniniSumoPresser.class);
+        TYPE_MAPPING.put('N', NextLevelTrigger.class);
     }
+
+    Properties props;
     
-    public Map(String data)
+    private String mapData;
+    
+    public Map(String data, Properties props)
     {
         super(800, 600);
+        this.props = props;
         loadLevel(data);
+        this.mapData = data;
+    }
+
+    public Map(String data)
+    {
+        this(data, new Properties());
     }
 
     public Map()
@@ -113,14 +132,59 @@ public class Map extends CameraViewableWorld
     {
         return cornerToCenter(p.x, p.y);
     }
+    
+    public World reload()
+    {
+        return new Map(this.mapData);
+    }
 
     private void startLevel()
     {
-
+        
     }
 
     private void endLevel()
     {
-
+        
+    }
+    
+    @Override
+    public void act()
+    {
+        if(!MUSIC_PLAYING)
+        { BACKGROUND_MUSIC.playLoop(); MUSIC_PLAYING = true; }
+    }
+    
+    public World nextWorld()
+    {
+        String nextMap = props.getProperty("next.map");
+        if (nextMap != null)
+        {
+            Properties nextInfo = loadNextWorldProps(nextMap);
+            return new Map(Resource.loadLevel(nextMap), nextInfo);
+        }
+        else
+        {
+            return new Menu();
+        }
+    }
+    
+    private Properties loadNextWorldProps(String worldDir)
+    {
+        Properties info = new Properties();
+        InputStream in = null;
+        try {
+            try {
+                URL url = GreenfootUtil.getURL("level.properties", "levels/" + worldDir);
+                in = url.openStream();
+                info.load(in);
+                return info;
+            } finally {
+                if (in != null)
+                    in.close();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

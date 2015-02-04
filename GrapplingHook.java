@@ -4,7 +4,8 @@ import java.awt.Point;
 
 public class GrapplingHook extends VisibleActor
 {
-    private double SPEED = 12;
+    Platform platform;
+    private double SPEED = 6;
     private double ANGLE = 60;
     private Color COLOR = Color.BLACK;
     
@@ -31,9 +32,8 @@ public class GrapplingHook extends VisibleActor
         {
             target.x += direction * SPEED * Math.cos(ANGLE * Math.PI / 180) + this.initialVelocityX;
             target.y -= SPEED * Math.sin(ANGLE * Math.PI / 180);
-            
-            if(parent.publicGetOneObjectAtOffset(target.x - parent.getX(),
-            target.y - parent.getY(), Platform.class) != null)
+            this.platform = (Platform) parent.publicGetOneObjectAtOffset(target.x - parent.getX(), target.y - parent.getY(), Platform.class);
+            if(platform != null)
             {
                 isHooked = true;
             }
@@ -41,7 +41,7 @@ public class GrapplingHook extends VisibleActor
         width = Math.abs(target.x - parent.getX()) + 1;
         height = Math.abs(target.y - parent.getY()) + 1;
         
-        int disp_direction = target.x < parent.getX() ? -1 : 1;
+        int disp_direction = (target.x < parent.getX() ? -1 : 1) * (target.y < parent.getY() ? 1 : -1);
         img = new GreenfootImage(width, height);
         img.setColor(COLOR);
         img.drawLine((disp_direction < 0 ? width - 1 : 0), height - 1, (disp_direction < 0 ? 0 : width - 1), 0);

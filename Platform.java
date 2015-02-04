@@ -11,6 +11,7 @@ public class Platform extends VisibleActor
 {
     public Platform()
     {
+        setImage("images/FloorTileSmall.png");
     }
     
     public int left()
