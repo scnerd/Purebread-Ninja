@@ -15,7 +15,7 @@ public class PaniniSumoPresser extends Enemy
     
     @Animates(IDLE)
     @DefaultAnimation
-    public Sprite idle = Sprite.ImageSheet("pumpkin.png");
+    public Sprite idle = Sprite.ImageSheet("pumpkin.png", 1);
     
     @Override
     public void act()

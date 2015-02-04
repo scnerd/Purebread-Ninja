@@ -15,10 +15,10 @@ public class ButterRonin extends Enemy
     
     @Animates(IDLE)
     @DefaultAnimation
-    public Sprite idle = Sprite.ImageSheet("chips-1.png");
+    public Sprite idle = Sprite.ImageSheet("chips-1.png", 1);
     
     @Animates(MOVING_FLOOR)
-    public Sprite running = Sprite.ImageSheet("chips-1.png");
+    public Sprite running = Sprite.ImageSheet("chips-1.png", 1);
     
     @Override
     public void act()

@@ -11,7 +11,7 @@ public class JamFisher extends Enemy
     
     @Animates(IDLE)
     @DefaultAnimation
-    public Sprite idle = Sprite.ImageSheet("grapes.png");
+    public Sprite idle = Sprite.ImageSheet("grapes.png", 1);
     
     public void act() 
     {
