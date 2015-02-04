@@ -11,7 +11,6 @@ public class Platform extends VisibleActor
 {
     public Platform()
     {
-        this.setImage("images/brick.jpg");
     }
     
     public int left()

@@ -15,13 +15,22 @@ public class Player extends Character
     @DefaultAnimation
     public Sprite idle = ImageSheet("images/player/standing.png");
     
+    @Animates(IDLE_CEILING)
+    public Sprite hanging = ImageSheet("images/player/hanging.png");
+    
     @Animates(MOVING_FLOOR)
     public Sprite running = ImageSheet("images/player/running.png");
     
     @Animates(MOVING_AIR)
-    public Sprite jumping = ImageSheet("images/player/jumping.png");
+    public Sprite jumping = ImageSheet("images/player/flying.png");
     
-    public static final Point2D.Double MAX_VELOCITY = new Point2D.Double(3, 6);
+    @Animates(MOVING_WALL)
+    public Sprite flying = ImageSheet("images/player/sliding.png");
+    
+    @Animates(MOVING_CEILING)
+    public Sprite climbing = ImageSheet("images/player/climbing.png");
+    
+    public static final Point2D.Double MAX_VELOCITY = new Point2D.Double(6, 12);
     public int health = 5;
     protected CommandInterpreter controller;
     private Point2D.Double acceleration;
@@ -29,20 +38,20 @@ public class Player extends Character
     private boolean usedUp = false;
     private GrapplingHook hook = null;
     
-    private double ACC_GRAVITY = 0.25;
-    private double ACC_GROUND_JUMP = 4.5;
-    private double ACC_HOLD_JUMP = 0.1;
+    private double ACC_GRAVITY = 0.5;
+    private double ACC_GROUND_JUMP = 9;
+    private double ACC_HOLD_JUMP = 0.2;
     
-    private double ACC_MOVEMENT_GROUND = 0.4;
-    private double ACC_MOVEMENT_AIR = 0.25;
-    private double ACC_FRICTION = 0.4;
+    private double ACC_MOVEMENT_GROUND = 0.8;
+    private double ACC_MOVEMENT_AIR = 0.5;
+    private double ACC_FRICTION = 0.8;
     
-    private double ACC_WALL_HOLD = 0.2;
-    private double ACC_WALL_JUMP = 4.5;
-    private double ACC_WALL_JUMP_HORZ = 2;
-    private double SLOWEST_SLIDE = 1;
+    private double ACC_WALL_HOLD = 0.4;
+    private double ACC_WALL_JUMP = 9;
+    private double ACC_WALL_JUMP_HORZ = 4;
+    private double SLOWEST_SLIDE = 2;
     
-    private double GRAPPLE_SPEED = 2.5;
+    private double GRAPPLE_SPEED = 5;
     
     private boolean onGround;
     private boolean onLeftWall;
@@ -101,14 +110,23 @@ public class Player extends Character
         {
             currentAction = MOVING_FLOOR;
         }
-
         else if (velocity.x == 0 && onGround)
         {
             currentAction = IDLE;
         }
         else if (!onGround)
         {
-            currentAction = MOVING_AIR;
+            if(onCeiling && controller.check(UP))
+            {
+                if(velocity.x != 0)
+                { currentAction = MOVING_CEILING; }
+                else
+                { currentAction = IDLE_CEILING; }
+            }
+            else if(velocity.y > 0 && ((controller.check(RIGHT) && onRightWall) ^ (controller.check(LEFT) && onLeftWall)))
+            { currentAction = MOVING_WALL; }
+            else
+            { currentAction = MOVING_AIR; }
         }
         
         super.act();
@@ -198,17 +216,12 @@ public class Player extends Character
                 else if(controller.check(RIGHT))
                 { acceleration.x += ACC_MOVEMENT_GROUND; }
             }
-            else if(onWall)
+            else if((controller.check(LEFT) && onLeftWall) ^ (controller.check(RIGHT) && onRightWall))
             {
-                if(controller.check(LEFT) && controller.check(RIGHT))
-                { }
-                else if((controller.check(LEFT) && onLeftWall) || (controller.check(RIGHT) && onRightWall))
-                { 
-                    if(velocity.y < SLOWEST_SLIDE)
-                        acceleration.y = Math.min(acceleration.y, SLOWEST_SLIDE - velocity.y);
-                    else
-                        acceleration.y = -Math.min(velocity.y - SLOWEST_SLIDE, ACC_WALL_HOLD);
-                }
+                if(velocity.y < SLOWEST_SLIDE)
+                    acceleration.y = Math.min(acceleration.y, SLOWEST_SLIDE - velocity.y);
+                else
+                    acceleration.y = -Math.min(velocity.y - SLOWEST_SLIDE, ACC_WALL_HOLD);
             }
             else
             {
