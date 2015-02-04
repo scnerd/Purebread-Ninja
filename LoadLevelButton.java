@@ -38,6 +38,6 @@ public class LoadLevelButton extends TextButton
     @Override
     public void onClick()
     {
-        Greenfoot.setWorld(new Map(Resource.loadLevel(levelDir)));
+        Greenfoot.setWorld(new Map(Resource.loadLevel(levelDir), info));
     }
 }
