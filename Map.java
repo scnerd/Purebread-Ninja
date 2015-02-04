@@ -37,10 +37,13 @@ public class Map extends CameraViewableWorld
         TYPE_MAPPING.put('4', PaniniSumoPresser.class);
     }
     
+    private String mapData;
+    
     public Map(String data)
     {
         super(800, 600);
         loadLevel(data);
+        this.mapData = data;
     }
 
     public Map()
@@ -112,6 +115,11 @@ public class Map extends CameraViewableWorld
     public static Point cornerToCenter(Point p)
     {
         return cornerToCenter(p.x, p.y);
+    }
+    
+    public World reload()
+    {
+        return new Map(this.mapData);
     }
 
     private void startLevel()

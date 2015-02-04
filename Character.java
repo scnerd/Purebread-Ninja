@@ -14,7 +14,7 @@ import java.lang.reflect.Field;
  */
 public abstract class Character extends AnimatedActor
 {
-    public static final int DEFAULT_COLLISION_MARGIN = 2;
+    public static final int DEFAULT_COLLISION_MARGIN = 6;
     
     protected int collisionMargin = DEFAULT_COLLISION_MARGIN;
     protected Point2D.Double position = null;

@@ -37,21 +37,22 @@ public class Player extends Character
     private int direction = 1;
     private boolean usedUp = false;
     private GrapplingHook hook = null;
+    private boolean isHookReady = true;
     
-    private double ACC_GRAVITY = 0.5;
-    private double ACC_GROUND_JUMP = 9;
-    private double ACC_HOLD_JUMP = 0.2;
+    private double ACC_GRAVITY = 0.375;
+    private double ACC_GROUND_JUMP = 6.75;
+    private double ACC_HOLD_JUMP = 0.15;
     
-    private double ACC_MOVEMENT_GROUND = 0.8;
-    private double ACC_MOVEMENT_AIR = 0.5;
-    private double ACC_FRICTION = 0.8;
+    private double ACC_MOVEMENT_GROUND = 0.6;
+    private double ACC_MOVEMENT_AIR = 0.375;
+    private double ACC_FRICTION = 0.6;
     
-    private double ACC_WALL_HOLD = 0.4;
-    private double ACC_WALL_JUMP = 9;
-    private double ACC_WALL_JUMP_HORZ = 4;
-    private double SLOWEST_SLIDE = 2;
+    private double ACC_WALL_HOLD = 0.3;
+    private double ACC_WALL_JUMP = 6.75;
+    private double ACC_WALL_JUMP_HORZ = 3;
+    private double SLOWEST_SLIDE = 1.5;
     
-    private double GRAPPLE_SPEED = 5;
+    private double GRAPPLE_SPEED = 3.75;
     
     private boolean onGround;
     private boolean onLeftWall;
@@ -101,6 +102,7 @@ public class Player extends Character
                 this.getWorld().removeObject(hook);
                 hook = null;
             }
+            isHookReady = true;
         }
         finalizeMovement();
         flipFrames = direction == -1;
@@ -245,9 +247,9 @@ public class Player extends Character
         // - Jumping
         if(controller.check(UP))
         {
-            if(onCeiling && !onGround)
+            if(onCeiling)
             {
-                acceleration.y = -velocity.y;
+                    acceleration.y = -velocity.y;
             }
             else if(onGround && !usedUp)
             { acceleration.y = -ACC_GROUND_JUMP; }
@@ -282,17 +284,30 @@ public class Player extends Character
     private void triggerGrapple()
     {
         
-        if(hook == null)
+        if(hook == null && isHookReady)
         {
             hook = new GrapplingHook(this, this.direction);
             getWorld().addObject(hook, getX(), getY());
+            isHookReady = false;
         }
-        else if(hook.getIsHooked())
+        else if(hook != null && hook.getIsHooked())
         {
             java.awt.Point target = hook.getHookTarget();
-            double angle = Math.atan2(target.y - getY(), target.x - getX());
-            acceleration.x += GRAPPLE_SPEED * Math.cos(angle);
-            acceleration.y += GRAPPLE_SPEED * Math.sin(angle);
+            Platform platform = hook.platform;
+            double dy = platform.getY() - getY();
+            double dx = platform.getX() - getX();
+            double distance = Math.sqrt(dy*dy + dx*dx);
+            if (distance > 64)
+            {
+                double angle = Math.atan2(dy, dx);
+                acceleration.x += GRAPPLE_SPEED * Math.cos(angle);
+                acceleration.y += GRAPPLE_SPEED * Math.sin(angle);   
+            }
+            else 
+            {
+                this.getWorld().removeObject(hook);
+                hook = null;
+            }
         }
     }
     
