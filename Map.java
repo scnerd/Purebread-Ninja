@@ -19,7 +19,7 @@ public class Map extends CameraViewableWorld
      * TODO: Implement camera following
      * TODO: Implement background
      */
-    public static int GRID_SIZE = 48;
+    public static int GRID_SIZE = 49;
     public static int levelNumber = 0;
     public static int levelWidth = 0;
     public static int levelHeight = 0;
