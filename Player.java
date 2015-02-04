@@ -31,10 +31,10 @@ public class Player extends Character
     public Sprite climbing = ImageSheet("images/player/climbing.png", 6);
     
     @Animates(HURT)
-    public Sprite hurt = Sprite.ImageSheet("images/player/hurting.png");
+    public Sprite hurt = Sprite.ImageSheet("images/player/hurting.png", 4);
 
     @Animates(INVULNERABLE)
-    public Sprite invulnerable = Sprite.ImageSheet("images/player/invulnerable.png");
+    public Sprite invulnerable = Sprite.ImageSheet("images/player/invulnerable.png", 1);
     
     public static final Point2D.Double MAX_VELOCITY = new Point2D.Double(6, 12);
     public int health = 5;
@@ -87,8 +87,10 @@ public class Player extends Character
             velocity.y = - knockback_y;
             
             if (--health == 0)
-                Greenfoot.setWorld(new Menu());
-            
+            {
+                Map m = (Map)getWorld();
+                Greenfoot.setWorld(new ScreenWorld("images/game_over.png", m.reload()));
+            }
             isInvulnerable = true;
             hurtDisplayDuration = HURT_DISPLAY_DEFAULT;
             invulnerableDisplayDuration = INVULNERABLE_DISPLAY_DEFAULT;

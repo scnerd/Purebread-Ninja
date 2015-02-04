@@ -14,6 +14,7 @@ public class ScreenWorld extends World
         super(800, 600, 1);
         this.next = next;
         Greenfoot.getKey();
+        setBackground(image);
         
     }
     
