@@ -20,7 +20,7 @@ public class Enemy extends Character
     public void act()
     {
         enactMovement();
-        checkCollisions();
+        //checkCollisions();
         
         super.act();
     }
@@ -65,11 +65,14 @@ public class Enemy extends Character
         }
     }
     
-    public boolean isFacingPlayer()
+    public boolean isFacingPlayer(Actor player)
     {
-        Player player = (Player)getWorld().getObjects(Player.class).get(0);
-        
         return flipFrames != (player.getX() >= getX());
+    }
+    
+    public boolean isVulnerableTo(Actor attacker)
+    {
+        return isFacingPlayer(attacker);
     }
     
     protected void facePlayer()
@@ -125,22 +128,5 @@ public class Enemy extends Character
         flipFrames = velocity.x < 0 ? true : (velocity.x > 0 ? false : flipFrames);
         
         setLocation((int)position.x, (int)position.y);
-    }
-    
-    protected void checkCollisions()
-    {
-        Actor intersects = null;
-        if((intersects = getOneIntersectingObject(Player.class)) != null)
-        {
-            if (isFacingPlayer())
-            {
-                ((Player)intersects).damage(this);
-            }
-            else
-            {
-                damage(intersects);
-            }
-            //setImage(deathImage);
-        }
     }
 }

@@ -9,5 +9,7 @@ public enum CharacterAction
     MOVING_WALL,
     MOVING_CEILING,
     ATTACKING,
-    GRAPPLING;
+    GRAPPLING,
+    HURT,
+    INVULNERABLE;
 }
