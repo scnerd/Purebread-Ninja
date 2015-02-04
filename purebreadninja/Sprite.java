@@ -10,8 +10,8 @@ import java.util.LinkedList;
 
 public class Sprite extends SpriteAnimation
 {
-    private static final int MIN_FRAME_WIDTH = 32;
-    private static final int MAX_FRAME_WIDTH = 64;
+    private static final int MIN_FRAME_WIDTH = 24;
+    private static final int MAX_FRAME_WIDTH = 48;
     private static final IllegalArgumentException FRAME_WIDTH_ERROR = new IllegalArgumentException();
     
     public static Sprite ImageSheet(String file)
