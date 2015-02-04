@@ -6,6 +6,7 @@ import java.lang.IllegalArgumentException;
 import java.lang.reflect.InvocationTargetException;
 import java.awt.Point;
 import java.util.HashMap;
+import java.util.Properties;
 
 /**
  * Write a description of class Map here.
@@ -38,14 +39,22 @@ public class Map extends CameraViewableWorld
         TYPE_MAPPING.put('3', HazelShogun.class);
         TYPE_MAPPING.put('4', PaniniSumoPresser.class);
     }
+
+    Properties props;
     
     private String mapData;
     
-    public Map(String data)
+    public Map(String data, Properties props)
     {
         super(800, 600);
+        this.props = props;
         loadLevel(data);
         this.mapData = data;
+    }
+
+    public Map(String data)
+    {
+        this(data, new Properties());
     }
 
     public Map()
