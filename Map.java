@@ -33,6 +33,7 @@ public class Map extends CameraViewableWorld
         TYPE_MAPPING = new HashMap<java.lang.Character, Class<? extends Actor>>();
         TYPE_MAPPING.put(' ', null);
         TYPE_MAPPING.put('_', Platform.class);
+        TYPE_MAPPING.put('H', HeatCoil.class);
         TYPE_MAPPING.put('0', Player.class);
         TYPE_MAPPING.put('1', ButterRonin.class);
         TYPE_MAPPING.put('2', JamFisher.class);
