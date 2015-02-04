@@ -216,7 +216,7 @@ public class Player extends Character
                 else if(controller.check(RIGHT))
                 { acceleration.x += ACC_MOVEMENT_GROUND; }
             }
-            else if((controller.check(LEFT) && onLeftWall) ^ (controller.check(RIGHT) && onRightWall))
+            else if(!onCeiling && (controller.check(LEFT) && onLeftWall) ^ (controller.check(RIGHT) && onRightWall))
             {
                 if(velocity.y < SLOWEST_SLIDE)
                     acceleration.y = Math.min(acceleration.y, SLOWEST_SLIDE - velocity.y);
@@ -245,7 +245,7 @@ public class Player extends Character
         // - Jumping
         if(controller.check(UP))
         {
-            if(onCeiling)
+            if(onCeiling && !onGround)
             {
                 acceleration.y = -velocity.y;
             }
