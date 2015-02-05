@@ -13,6 +13,8 @@ public class JamFisher extends Enemy
     @DefaultAnimation
     public Sprite idle = Sprite.ImageSheet("grapes.png", 1);
     
+    private GreenfootSound shootSound = new GreenfootSound("sounds/pew.wav");
+    
     public JamFisher()
     {
         // VISION_RANGE = 400, PROXIMITY_RANGE = 200
@@ -42,6 +44,7 @@ public class JamFisher extends Enemy
         {
             BulletSeed bullet = new BulletSeed(last_angle);
             this.getWorld().addObject(bullet, this.getX(), this.getY() - 10);
+            shootSound.play();
         } catch(Exception ex) {}
     }
     

@@ -73,6 +73,11 @@ public class Player extends Character
     private int hurtDisplayDuration;
     private int invulnerableDisplayDuration;
     
+    private CharacterAction prevAction = IDLE;
+    private static GreenfootSound hurtSound = new GreenfootSound("sounds/hurt.wav");
+    private static GreenfootSound landingSound = new GreenfootSound("sounds/land.wav");
+    private static GreenfootSound slidingSound = new GreenfootSound("sounds/slide.wav");
+    
     public Player() {}
     
     @Override
@@ -94,6 +99,7 @@ public class Player extends Character
             isInvulnerable = true;
             hurtDisplayDuration = HURT_DISPLAY_DEFAULT;
             invulnerableDisplayDuration = INVULNERABLE_DISPLAY_DEFAULT;
+            hurtSound.play();
         }
     }
 
@@ -166,6 +172,14 @@ public class Player extends Character
             else
             { currentAction = MOVING_AIR; }
         }
+        
+        if((prevAction != IDLE && prevAction != MOVING_FLOOR) && (currentAction == IDLE || currentAction == MOVING_FLOOR))
+        { landingSound.play(); }
+        if(prevAction != MOVING_WALL && currentAction == MOVING_WALL)
+        { slidingSound.playLoop(); }
+        if(prevAction == MOVING_WALL && currentAction != MOVING_WALL)
+        { slidingSound.stop(); }
+        prevAction = currentAction;
         
         super.act();
     }

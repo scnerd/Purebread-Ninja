@@ -17,6 +17,8 @@ public class GrapplingHook extends VisibleActor
     private Point target = null;
     private double initialVelocityX;
     
+    private static GreenfootSound hitSound = new GreenfootSound("sounds/grapple.wav");
+    
     public GrapplingHook(Player thrower, int direction)
     {
         this.parent = thrower;
@@ -36,6 +38,7 @@ public class GrapplingHook extends VisibleActor
             if(platform != null)
             {
                 isHooked = true;
+                hitSound.play();
             }
         }
         width = Math.abs(target.x - parent.getX()) + 1;
