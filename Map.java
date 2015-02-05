@@ -43,6 +43,7 @@ public class Map extends CameraViewableWorld
         TYPE_MAPPING.put('3', HazelShogun.class);
         TYPE_MAPPING.put('4', PaniniSumoPresser.class);
         TYPE_MAPPING.put('N', NextLevelTrigger.class);
+        TYPE_MAPPING.put('A', HelpText.HelpTextJump.class);
     }
 
     Properties props;

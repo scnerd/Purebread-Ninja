@@ -19,6 +19,8 @@ public class Enemy extends Character
     protected boolean sawPlayer = false;
     protected boolean engagedPlayer = false;
     
+    protected GreenfootSound deathSound = new GreenfootSound("sounds/death.wav");
+    
     public Enemy(int vision_range, int proximity_range)
     {
         VISION_RANGE = vision_range;
@@ -48,6 +50,7 @@ public class Enemy extends Character
     public void damage(Actor harmer)
     {
         getWorld().removeObject(this);
+        deathSound.play();
     }
     
     protected boolean playerInRange()
