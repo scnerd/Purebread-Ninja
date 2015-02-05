@@ -17,13 +17,20 @@ public class ButterRonin extends Enemy
     private int DEFAULT_ENGAGED_DURATION = 500;
     private int engagedDuration = 0;
     private boolean inRange;
+    private int DEFAULT_DYING_TICKS = 40;
+    private int dying_ticks = 0;
     
     @Animates(IDLE)
     @DefaultAnimation
     public Sprite idle = Sprite.ImageSheet("chips-1.png", 1);
-    
+    //public Sprite idle = Sprite.ImageSheet("butter_idle.png", 8);
+
     @Animates(MOVING_FLOOR)
     public Sprite running = Sprite.ImageSheet("chips-1.png", 1);
+    //public Sprite running = Sprite.ImageSheet("butter_attack.png", 6);
+    
+    @Animates(DYING)
+    public Sprite dying = Sprite.ImageSheet("chips-1.png", 1);
     
     public ButterRonin()
     {
@@ -39,30 +46,41 @@ public class ButterRonin extends Enemy
     @Override
     public void act()
     {   
-        inRange = playerInRange();
-        if (engagedPlayer)
+        if (isDying)
         {
-            if (inRange)
-                engagedDuration = DEFAULT_ENGAGED_DURATION;
-            if (engagedDuration <= 0)
-                next_direction = (isFacingPlayer((Player)getWorld().getObjects(Player.class).get(0)) ? 1 : -1);
-            cur_state = 1;
-            aggresive();
+            if (dying_ticks-- <= 0)
+            {
+                getWorld().removeObject(this);
+                return;
+            }
         }
         else
         {
-            cur_state = 0;
-            alert();
+            inRange = playerInRange();
+            if (engagedPlayer)
+            {
+                if (inRange)
+                    engagedDuration = DEFAULT_ENGAGED_DURATION;
+                if (engagedDuration <= 0)
+                    next_direction = (isFacingPlayer((Player)getWorld().getObjects(Player.class).get(0)) ? 1 : -1);
+                cur_state = 1;
+                aggresive();
+            }
+            else
+            {
+                cur_state = 0;
+                alert();
+            }
+            if (engagedDuration > 0)
+                engagedDuration--;
+            else
+                engagedPlayer = false;
+    
+            if (cur_state != prev_state) { wait_time = 0; }
+            prev_state = cur_state;
+            
+            changeDirectionAtEdge();
         }
-        if (engagedDuration > 0)
-            engagedDuration--;
-        else
-            engagedPlayer = false;
-
-        if (cur_state != prev_state) { wait_time = 0; }
-        prev_state = cur_state;
-        
-        changeDirectionAtEdge();
         super.act();
     }
     
@@ -106,5 +124,13 @@ public class ButterRonin extends Enemy
         }
         
         if (wait_time-- < 0) { wait_time = aggresive_wait_time; }
+    }
+    
+    @Override
+    protected void die()
+    {
+        isDying = true;
+        dying_ticks = DEFAULT_DYING_TICKS;
+        currentAction = DYING;
     }
 }

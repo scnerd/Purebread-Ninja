@@ -11,5 +11,6 @@ public enum CharacterAction
     ATTACKING,
     GRAPPLING,
     HURT,
-    INVULNERABLE;
+    INVULNERABLE,
+    DYING;
 }

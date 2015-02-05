@@ -11,10 +11,17 @@ public class PaniniSumoPresser extends Enemy
     private double speed = 3.0;
     
     private int cur_state = 0, prev_state = 0;
+    private int DEFAULT_DYING_TICKS = 36;
+    private int dying_ticks = 0;
     
     @Animates(IDLE)
     @DefaultAnimation
     public Sprite idle = Sprite.ImageSheet("pumpkin.png", 1);
+    //public Sprite idle = Sprite.ImageSheet("PaniniSumo.png", 6);
+    
+    @Animates(DYING)
+    public Sprite dying = Sprite.ImageSheet("pumpkin.png", 1);
+    //public Sprite dying = Sprite.ImageSheet("PaniniSumoDeath.png", 10);
     
     public PaniniSumoPresser()
     {
@@ -25,23 +32,19 @@ public class PaniniSumoPresser extends Enemy
     @Override
     public void act()
     {   
-        patrol();
-        /*
-        if (playerInRange())
+        if (isDying)
         {
-            cur_state = 1;
-            aggresive();
+            if (dying_ticks-- <= 0)
+            {
+                getWorld().removeObject(this);
+                return;
+            }
         }
         else
         {
-            cur_state = 0;
-            patrol();
+            patrol();       
+            changeDirectionAtEdge();
         }
-        if (cur_state != prev_state) { wait_time = 0; }
-        prev_state = cur_state;
-        */
-       
-        changeDirectionAtEdge();
         super.act();
     }
     
@@ -91,5 +94,13 @@ public class PaniniSumoPresser extends Enemy
         int trueEnemyHeight = getY() - enemyHeight/2;
 
         return (attacker.getY() <= trueEnemyHeight) && (Math.abs(attacker.getX() - getX()) <= (enemyWidth/2 + playerWidth/2));
+    }
+    
+    @Override
+    protected void die()
+    {
+        isDying = true;
+        dying_ticks = DEFAULT_DYING_TICKS;
+        currentAction = DYING;
     }
 }

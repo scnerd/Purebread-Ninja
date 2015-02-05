@@ -18,6 +18,7 @@ public class Enemy extends Character
     
     protected boolean sawPlayer = false;
     protected boolean engagedPlayer = false;
+    public boolean isDying = false;
     
     protected GreenfootSound deathSound = new GreenfootSound("sounds/death.wav");
     
@@ -31,8 +32,6 @@ public class Enemy extends Character
     public void act()
     {
         enactMovement();
-        //checkCollisions();
-        
         super.act();
     }
     
@@ -49,8 +48,13 @@ public class Enemy extends Character
     
     public void damage(Actor harmer)
     {
-        getWorld().removeObject(this);
         deathSound.play();
+        die();
+    }
+    
+    protected void die()
+    {
+        getWorld().removeObject(this);
     }
     
     protected boolean playerInRange()

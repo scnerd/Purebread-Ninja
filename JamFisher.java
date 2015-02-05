@@ -9,9 +9,20 @@ public class JamFisher extends Enemy
     private int wait_time = 0;
     private double last_angle = 0;
     
+    private int DEFAULT_SHOOTING_TICKS = 20;
+    private int shooting_ticks = 0;
+    private int DEFAULT_DYING_TICKS = 35;
+    private int dying_ticks = 0;
+    
     @Animates(IDLE)
     @DefaultAnimation
-    public Sprite idle = Sprite.ImageSheet("grapes.png", 1);
+    public Sprite idle = Sprite.ImageSheet("JamFisherIdle.png", 5);
+    
+    @Animates(ATTACKING)
+    public Sprite attacking = Sprite.ImageSheet("JamFisherAttack.png", 3);
+    
+    @Animates(DYING)
+    public Sprite dying = Sprite.ImageSheet("JamFisherDeath.png", 11);
     
     private GreenfootSound shootSound = new GreenfootSound("sounds/pew.wav");
     
@@ -23,18 +34,35 @@ public class JamFisher extends Enemy
     
     public void act() 
     {
-        if (playerInProximity() || playerInRange())
+        if (isDying)
         {
-            last_angle = getAngleToPlayer();
-            facePlayer();
-            aggresive();
+            if (dying_ticks-- <= 0)
+            {
+                getWorld().removeObject(this);
+                return;
+            }
         }
-        else if (sawPlayer)
+        else
         {
-            engagedPlayer = false;
-            alert();
+            if (shooting_ticks <= 0)
+            {
+                currentAction = IDLE;
+            }
+            else
+                shooting_ticks--;
+            
+            if (playerInProximity() || playerInRange())
+            {
+                last_angle = getAngleToPlayer();
+                facePlayer();
+                aggresive();
+            }
+            else if (sawPlayer)
+            {
+                engagedPlayer = false;
+                alert();
+            }
         }
-        
         super.act();
     }    
     
@@ -42,6 +70,9 @@ public class JamFisher extends Enemy
     {
         try
         {
+            currentAction = ATTACKING;
+            shooting_ticks = DEFAULT_SHOOTING_TICKS;
+            
             BulletSeed bullet = new BulletSeed(last_angle);
             this.getWorld().addObject(bullet, this.getX(), this.getY() - 10);
             shootSound.play();
@@ -75,5 +106,13 @@ public class JamFisher extends Enemy
         }
         
         if (wait_time-- < 0) { wait_time = aggresive_wait_time; }
+    }
+    
+    @Override
+    protected void die()
+    {
+        isDying = true;
+        dying_ticks = DEFAULT_DYING_TICKS;
+        currentAction = DYING;
     }
 }

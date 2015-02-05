@@ -396,11 +396,11 @@ public class Player extends Character
         Enemy enemy = null;
         if((enemy = (Enemy)getOneIntersectingObject(Enemy.class)) != null)
         {
-            if (enemy.isVulnerableTo(this))
+            if (enemy.isVulnerableTo(this) && !enemy.isDying)
             {
                 enemy.damage(this);
             }
-            else if (!isInvulnerable)
+            else if (!isInvulnerable && !enemy.isDying)
             {
                 enemy.facePlayer();
                 damage(enemy);
