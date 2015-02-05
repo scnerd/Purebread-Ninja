@@ -42,6 +42,8 @@ public class Map extends CameraViewableWorld
         TYPE_MAPPING.put('2', JamFisher.class);
         TYPE_MAPPING.put('3', HazelShogun.class);
         TYPE_MAPPING.put('4', PaniniSumoPresser.class);
+        TYPE_MAPPING.put('5', ButterRoninTutorial.class);
+        TYPE_MAPPING.put('6', Toaster.class);
         TYPE_MAPPING.put('N', NextLevelTrigger.class);
         TYPE_MAPPING.put('A', HelpText.HelpTextJump.class);
     }
