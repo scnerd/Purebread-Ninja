@@ -384,11 +384,12 @@ public class Player extends Character
         {
             if (enemy.isVulnerableTo(this))
             {
-                damage(enemy);
+                enemy.damage(this);
             }
             else if (!isInvulnerable)
             {
-                enemy.damage(this);
+                enemy.facePlayer();
+                damage(enemy);
             }
         }
     }

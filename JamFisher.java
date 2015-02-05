@@ -13,6 +13,12 @@ public class JamFisher extends Enemy
     @DefaultAnimation
     public Sprite idle = Sprite.ImageSheet("grapes.png", 1);
     
+    public JamFisher()
+    {
+        // VISION_RANGE = 400, PROXIMITY_RANGE = 200
+        super(400, 200);
+    }
+    
     public void act() 
     {
         if (playerInProximity() || playerInRange())

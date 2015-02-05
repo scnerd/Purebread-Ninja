@@ -11,13 +11,19 @@ import java.util.List;
 public class Enemy extends Character
 {
     
-    public static final Point2D.Double MAX_VELOCITY = new Point2D.Double(3, 6);
+    public static final Point2D.Double MAX_VELOCITY = new Point2D.Double(6, 6);
     private double ACC_GRAVITY = 0.25;
-    private int VISION_RANGE = 400;
-    private int PROXIMITY_RANGE = 200;
+    private int VISION_RANGE;
+    private int PROXIMITY_RANGE;
     
     protected boolean sawPlayer = false;
     protected boolean engagedPlayer = false;
+    
+    public Enemy(int vision_range, int proximity_range)
+    {
+        VISION_RANGE = vision_range;
+        PROXIMITY_RANGE = proximity_range;
+    }
     
     @Override
     public void act()
@@ -113,10 +119,12 @@ public class Enemy extends Character
     
     public boolean isVulnerableTo(Actor attacker)
     {
-        return isFacingPlayer(attacker);
+        int enemyHeight = getImage().getHeight();
+        
+        return !isFacingPlayer(attacker) && (Math.abs(getY() - attacker.getY()) <= enemyHeight/2.0);
     }
     
-    protected void facePlayer()
+    public void facePlayer()
     {
         double angle = getAngleToPlayer();
 
@@ -128,7 +136,9 @@ public class Enemy extends Character
         int left_distance = 20;
         int down_distance = 20;
         
-        return (getOneObjectAtOffset(-left_distance, down_distance, Platform.class) == null);
+        if (getOneObjectAtOffset(-left_distance, 0, Platform.class) == null)
+            return (getOneObjectAtOffset(-left_distance, down_distance, Platform.class) == null);
+        return true;
     }
     
     protected boolean atRightEdge()
@@ -136,7 +146,17 @@ public class Enemy extends Character
         int right_distance = 20;
         int down_distance = 20;
         
-        return (getOneObjectAtOffset(right_distance, down_distance, Platform.class) == null);
+        if (getOneObjectAtOffset(right_distance, 0, Platform.class) == null)
+               return (getOneObjectAtOffset(right_distance, down_distance, Platform.class) == null);
+        return true;
+    }
+    
+    protected void changeDirectionAtEdge()
+    {
+        if ((velocity.x < 0 && atLeftEdge()) || (velocity.x > 0 && atRightEdge()))
+        {
+            velocity.x *= -1;
+        }
     }
     
     protected void setVelocity(double x, double y)
