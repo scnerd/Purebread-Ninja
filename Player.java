@@ -207,7 +207,7 @@ public class Player extends Character
 
     private HashSet rightWallTiles()
     {
-        int rightX = getImage().getWidth() / 2;
+        int rightX = getImage().getWidth() / 2 + 1;
         int downY = getImage().getHeight() / 2 - collisionMargin;
         int upY = -getImage().getHeight() / 2 + collisionMargin;
 

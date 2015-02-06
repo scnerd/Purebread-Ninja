@@ -45,7 +45,14 @@ public class Map extends CameraViewableWorld
         TYPE_MAPPING.put('5', ButterRoninTutorial.class);
         TYPE_MAPPING.put('6', Toaster.class);
         TYPE_MAPPING.put('N', NextLevelTrigger.class);
-        TYPE_MAPPING.put('A', HelpText.HelpTextJump.class);
+        TYPE_MAPPING.put('a', HelpText.HelpTextMove.class);
+        TYPE_MAPPING.put('b', HelpText.HelpTextJump.class);
+        TYPE_MAPPING.put('c', HelpText.HelpTextBurner.class);
+        TYPE_MAPPING.put('d', HelpText.HelpTextWall.class);
+        TYPE_MAPPING.put('e', HelpText.HelpTextCeiling.class);
+        TYPE_MAPPING.put('f', HelpText.HelpTextGrapple.class);
+        TYPE_MAPPING.put('g', HelpText.HelpTextWallJump.class);
+        TYPE_MAPPING.put('h', HelpText.HelpTextNext.class);
     }
 
     Properties props;
