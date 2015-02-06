@@ -1,5 +1,6 @@
 import greenfoot.*;
 import java.awt.Point;
+import static purebreadninja.Sprite.*;
 
 /**
  * Write a description of class Platform here.
@@ -7,12 +8,15 @@ import java.awt.Point;
  * @author (your name) 
  * @version (a version number or a date)
  */
-public class Platform extends VisibleActor
+public class Platform extends AnimatedActor
 {
     public Platform()
     {
-        setImage("images/FloorTileSmall.png");
+        setCurrentAnimation(ImageSheet("images/FloorTileSmall.png", 1));
     }
+    
+    public void act()
+    { super.act(); }
     
     public int left()
     { return getX() - getImage().getWidth() / 2; }
