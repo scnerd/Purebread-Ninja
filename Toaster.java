@@ -212,6 +212,11 @@ public class Toaster extends Enemy
     @Override
     protected void die()
     {
+        List<Enemy> enemies = getWorld().getObjects(Enemy.class);
+        for (Enemy enemy : enemies)
+            if (enemy != this)    
+                enemy.die();
+        
         isDying = true;
         dying_ticks = DEFAULT_DYING_TICKS;
         currentAction = DYING;
@@ -261,7 +266,7 @@ public class Toaster extends Enemy
         try
         {
             PaniniSumoPresser new_panini = new PaniniSumoPresser();
-            new_panini.setVelocity(next_direction * 5.0, -10.0);
+            new_panini.setVelocity(next_direction * -15.0, -10.0);
             this.getWorld().addObject(new_panini, this.getX(), this.getY() - 400);
         } catch(Exception ex) {}
     }
