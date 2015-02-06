@@ -42,7 +42,7 @@ public class Toaster extends Enemy
     public Sprite moving_air = Sprite.ImageSheet("ToasterDaimyoJump.png", 8);
     
     @Animates(HURT)
-    public Sprite hurt = Sprite.ImageSheet("ToasterDaimyo.png", 8);
+    public Sprite hurt = Sprite.ImageSheet("ToasterDaimyoHurt.png", 1);
     
     @Animates(DYING)
     public Sprite dying = Sprite.ImageSheet("ToasterDaimyo.png", 8);
@@ -226,7 +226,7 @@ public class Toaster extends Enemy
     private void setAction()
     {
         if (isBeingDamaged)
-            currentAction = MOVING_AIR;
+            currentAction = HURT;
         else if (velocity.y != 0)
             currentAction = MOVING_AIR;
         else if (velocity.x == 0)
