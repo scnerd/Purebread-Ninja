@@ -180,7 +180,7 @@ public class Player extends Character
         if(prevAction == MOVING_WALL && currentAction != MOVING_WALL)
         { slidingSound.stop(); }
         prevAction = currentAction;
-        
+        checkHeatTiles();
         super.act();
     }
     
@@ -406,5 +406,61 @@ public class Player extends Character
                 damage(enemy);
             }
         }
+    }
+    
+    public void checkHeatTiles() 
+    {
+        HashSet tiles = new HashSet();
+        lowerHeatTiles(tiles);
+        rightHeatTile(tiles);
+        leftHeatTile(tiles);
+        aboveHeatTile(tiles);
+        tiles.remove(null);
+        for(Object o : tiles)
+        {
+            HeatCoil h = (HeatCoil) o;
+            damage(h);
+        }
+    }
+    
+    private HashSet lowerHeatTiles(HashSet toReturn)
+    {
+        int leftX = -getImage().getWidth() / 2 + collisionMargin;
+        int rightX = getImage().getWidth() / 2 - collisionMargin;
+        int down = getImage().getHeight() / 2 + 1;
+        toReturn.addAll(getObjectsAtOffset(leftX, down, HeatCoil.class));
+        toReturn.addAll(getObjectsAtOffset(rightX, down, HeatCoil.class));
+        return toReturn;
+    }
+
+    private HashSet rightHeatTile(HashSet toReturn)
+    {
+        int rightX = getImage().getWidth() / 2 + 1;
+        int downY = getImage().getHeight() / 2 - collisionMargin;
+        int upY = -getImage().getHeight() / 2 + collisionMargin;
+        toReturn.addAll(getObjectsAtOffset(rightX, downY, HeatCoil.class));
+        toReturn.addAll(getObjectsAtOffset(rightX, upY, HeatCoil.class));
+        return toReturn;
+    }
+
+    private HashSet leftHeatTile(HashSet toReturn)
+    {
+        int leftX = -getImage().getWidth() / 2 - 1;
+        int downY = getImage().getHeight() / 2 - collisionMargin;
+        int upY = -getImage().getHeight() / 2 + collisionMargin;
+        toReturn.addAll(getObjectsAtOffset(leftX, downY, HeatCoil.class));
+        toReturn.addAll(getObjectsAtOffset(leftX, upY, HeatCoil.class));
+        return toReturn;
+    }
+
+
+    private HashSet aboveHeatTile(HashSet toReturn)
+    {
+        int leftX = -getImage().getWidth() / 2 + collisionMargin;
+        int rightX = getImage().getWidth() / 2 - collisionMargin;
+        int up = -getImage().getHeight() / 2 - 1;
+        toReturn.addAll(getObjectsAtOffset(leftX, up, HeatCoil.class));
+        toReturn.addAll(getObjectsAtOffset(rightX, up, HeatCoil.class));
+        return toReturn;
     }
 }
