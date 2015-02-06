@@ -1,4 +1,6 @@
 import greenfoot.*;
+import purebreadninja.*;
+import static purebreadninja.CharacterAction.*;
 
 /**
  * Write a description of class HazelShogun here.
@@ -8,10 +10,12 @@ import greenfoot.*;
  */
 public class HazelShogun extends Enemy
 {
-    /**
-     * Act - do whatever the HazelShogun wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
+    
+    @Animates(IDLE)
+    @DefaultAnimation
+    public Sprite idle = Sprite.ImageSheet("BreadNinjaHealth1.png", 1);
+    //public Sprite idle = Sprite.ImageSheet("butter_idle.png", 8);
+    
     public HazelShogun()
     {
         super(0,0);

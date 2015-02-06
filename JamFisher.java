@@ -29,7 +29,7 @@ public class JamFisher extends Enemy
     public JamFisher()
     {
         // VISION_RANGE = 400, PROXIMITY_RANGE = 200
-        super(380, 100);
+        super(380, 200);
     }
     
     public void act() 

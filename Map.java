@@ -68,9 +68,11 @@ public class Map extends CameraViewableWorld
     {
         super(800, 600);
         this.props = props;
-        this.setPaintOrder(Player.class, Character.class, Actor.class);
+        this.setPaintOrder(HealthDisplay.class, Player.class, Character.class, Actor.class);
         loadLevel(data);
         this.mapData = data;
+        
+        initHealthDisplay();
     }
 
     public Map(String data)
@@ -127,6 +129,11 @@ public class Map extends CameraViewableWorld
             return true;
         }
         return false;
+    }
+    
+    private void initHealthDisplay()
+    {
+        this.addObject(new HealthDisplay(), 40, 40);
     }
     
     public static Point pointToGrid(double x, double y)
