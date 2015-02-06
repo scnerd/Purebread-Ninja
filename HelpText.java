@@ -22,7 +22,7 @@ public class HelpText extends LevelText
     static class HelpTextCeiling extends HelpText
     { public HelpTextCeiling() { super("Hold up to walk on the ceiling"); } }
     static class HelpTextGrapple extends HelpText
-    { public HelpTextGrapple() { super("Hold SHIFT to throw your grappling hook"); } }
+    { public HelpTextGrapple() { super("Hold SHIFT/J to throw your grappling hook"); } }
     static class HelpTextWallJump extends HelpText
     { public HelpTextWallJump() { super("Jump\nagainst\nwall\nto\nget\nhigher"); } }
     static class HelpTextNext extends HelpText
