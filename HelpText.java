@@ -1,4 +1,5 @@
 import greenfoot.*;
+import java.awt.Color;
 
 /**
  * Write a description of class HelpText here.
@@ -9,7 +10,7 @@ import greenfoot.*;
 public class HelpText extends LevelText
 {
     public HelpText(String message)
-    { super(message, 22); }
+    { super(message, 22, Color.WHITE); }
     
     static class HelpTextMove extends HelpText
     { public HelpTextMove() { super("A/D or LEFT/RIGHT to move"); } }

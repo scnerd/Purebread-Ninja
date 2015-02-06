@@ -72,6 +72,10 @@ public class Map extends CameraViewableWorld
         this.setPaintOrder(HealthDisplay.class, Player.class, Character.class, Actor.class);
         loadLevel(data);
         this.mapData = data;
+        String background = props.getProperty("background");
+        if (background == null)
+            background = "Pantry.png";
+        this.setBackground(background);
         initHealthDisplay();
     }
 
@@ -175,6 +179,11 @@ public class Map extends CameraViewableWorld
     @Override
     public void act()
     {
+        if (!introDone)
+        {
+            showIntros();
+            introDone = true;
+        }
         if(!MUSIC_PLAYING)
         { BACKGROUND_MUSIC.playLoop(); MUSIC_PLAYING = true; }
         
@@ -188,7 +197,7 @@ public class Map extends CameraViewableWorld
         World w = this;
         for(int i = 5; i != 0; --i)
         {
-            String screen = props.getProperty(String.format("out%d", i));
+            String screen = props.getProperty(String.format("intro%d", i));
             if (screen != null)
                 w = new ScreenWorld(screen, w);
                     

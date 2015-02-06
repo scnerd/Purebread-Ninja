@@ -14,6 +14,11 @@ public class LevelText extends VisibleActor
         this.setImage(new GreenfootImage(text, fontSize, fontColor, backgroundColor, fontOutline));
     }
     
+    public LevelText(String text, int fontSize, Color fontColor)
+    {
+        this(text, fontSize, fontColor, new Color(0, 0, 0, 0), null);
+    }
+    
     public LevelText(String text, int fontSize)
     {
         this(text, fontSize, Color.BLACK, new Color(0, 0, 0, 0), null);
