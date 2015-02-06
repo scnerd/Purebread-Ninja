@@ -8,7 +8,7 @@ import greenfoot.*;
  */
 public class ScreenWorld extends World
 {
-    private World next;
+    protected World next;
     public ScreenWorld(String image, World next)
     {    
         super(800, 600, 1);
@@ -23,6 +23,18 @@ public class ScreenWorld extends World
         super(800, 600, 1);
         this.next = new Menu();
         Greenfoot.getKey();
+    }
+    
+    public void clearGetKey()
+    {
+        while(Greenfoot.getKey() != null)
+            ;
+    }
+    
+    @Override
+    public void started()
+    {
+        clearGetKey();
     }
     
     @Override 
