@@ -58,7 +58,7 @@ public class Player extends Character
     private double ACC_WALL_JUMP_HORZ = 3;
     private double SLOWEST_SLIDE = 1.5;
     
-    private double GRAPPLE_SPEED = 3.75;
+    private double GRAPPLE_SPEED = 2;
     
     private int HURT_DISPLAY_DEFAULT = 10;
     private int INVULNERABLE_DISPLAY_DEFAULT = 40;
