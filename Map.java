@@ -63,6 +63,7 @@ public class Map extends CameraViewableWorld
     Properties props;
     
     private String mapData;
+    private boolean introDone = false;
     
     public Map(String data, Properties props)
     {
@@ -71,7 +72,6 @@ public class Map extends CameraViewableWorld
         this.setPaintOrder(HealthDisplay.class, Player.class, Character.class, Actor.class);
         loadLevel(data);
         this.mapData = data;
-        
         initHealthDisplay();
     }
 
@@ -163,6 +163,7 @@ public class Map extends CameraViewableWorld
 
     private void startLevel()
     {
+        showIntros();
         
     }
 
@@ -182,13 +183,34 @@ public class Map extends CameraViewableWorld
             
     }
     
+    public void showIntros()
+    {
+        World w = this;
+        for(int i = 5; i != 0; --i)
+        {
+            String screen = props.getProperty(String.format("out%d", i));
+            if (screen != null)
+                w = new ScreenWorld(screen, w);
+                    
+        }
+        Greenfoot.setWorld(w);
+    }
+    
     public World nextWorld()
     {
         String nextMap = props.getProperty("next.map");
         if (nextMap != null)
         {
             Properties nextInfo = loadNextWorldProps(nextMap);
-            return new Map(Resource.loadLevel(nextMap), nextInfo);
+            World w = new Map(Resource.loadLevel(nextMap), nextInfo);
+            for(int i = 0; i < 6; ++i)
+            {
+                String screen = props.getProperty(String.format("out%d", i));
+                if (screen != null)
+                    w = new ScreenWorld("screen", w);
+                    
+            }
+            return w;
         }
         else
         {
