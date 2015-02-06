@@ -46,8 +46,8 @@ public class Player extends Character
     private boolean isHookReady = true;
     
     private double ACC_GRAVITY = 0.375;
-    private double ACC_GROUND_JUMP = 6.75;
-    private double ACC_HOLD_JUMP = 0.15;
+    private double ACC_GROUND_JUMP = 7;
+    private double ACC_HOLD_JUMP = 0.175;
     
     private double ACC_MOVEMENT_GROUND = 0.6;
     private double ACC_MOVEMENT_AIR = 0.375;
