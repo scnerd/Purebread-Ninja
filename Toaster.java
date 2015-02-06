@@ -12,7 +12,7 @@ import java.util.List;
 public class Toaster extends Enemy
 {
     private double speed = 2.0;
-    private double charge_speed = 4.0;
+    private double charge_speed = 3.2;
     private int health = 3;
     
     private int wait_time = 0;
@@ -215,6 +215,12 @@ public class Toaster extends Enemy
         isDying = true;
         dying_ticks = DEFAULT_DYING_TICKS;
         currentAction = DYING;
+        
+        try
+        {
+            NextLevelTrigger trigger = new NextLevelTrigger();
+            this.getWorld().addObject(trigger, this.getX(), this.getY() - 125);
+        } catch(Exception ex) {}
     }
     
     private void setAction()

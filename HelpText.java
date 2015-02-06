@@ -27,4 +27,16 @@ public class HelpText extends LevelText
     { public HelpTextWallJump() { super("Jump\nagainst\nwall\nto\nget\nhigher"); } }
     static class HelpTextNext extends HelpText
     { public HelpTextNext() { super("Carry on!"); } }
+    
+    static class HelpTextButter1 extends HelpText
+    { public HelpTextButter1() { super("Surprise Butter Ronin by running into him from behind"); } }
+    static class HelpTextButter2 extends HelpText
+    { public HelpTextButter2() { super("Get behind them before they notice!"); } }
+    static class HelpTextJam1 extends HelpText
+    { public HelpTextJam1() { super("Maybe you could get\naround Jam Fisher"); } }
+    static class HelpTextJam2 extends HelpText
+    { public HelpTextJam2() { super("           ...then strike as he turns away!\nWait here...                               "); } }
+    static class HelpTextPanini1 extends HelpText
+    { public HelpTextPanini1() { super("Slam Panini Sumo Presser\ndown from above!"); } }
+    
 }
