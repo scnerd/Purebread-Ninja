@@ -178,7 +178,7 @@ public class Map extends CameraViewableWorld
         { BACKGROUND_MUSIC.playLoop(); MUSIC_PLAYING = true; }
         
         if(Greenfoot.isKeyDown("escape"))
-            Greenfoot.setWorld(new ScreenWorld("pause.png", this));
+            Greenfoot.setWorld(new PauseScreen("pause.png", this));
             
     }
     

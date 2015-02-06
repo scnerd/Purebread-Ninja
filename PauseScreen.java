@@ -16,7 +16,12 @@ public class PauseScreen extends ScreenWorld
     @Override
     public void act()
     {
-        if(Greenfoot.isKeyDown("escape"))
-            Greenfoot.setWorld(this.next);
+        String key = Greenfoot.getKey();
+        if("escape".equals(key))
+            Greenfoot.setWorld(new Menu());
+        else if (key != null)
+        {
+            Greenfoot.setWorld(next);
+        }
     }
 }

@@ -25,6 +25,18 @@ public class ScreenWorld extends World
         Greenfoot.getKey();
     }
     
+    public void clearGetKey()
+    {
+        while(Greenfoot.getKey() != null)
+            ;
+    }
+    
+    @Override
+    public void started()
+    {
+        clearGetKey();
+    }
+    
     @Override 
     public void act()
     {
