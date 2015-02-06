@@ -14,6 +14,7 @@ public class BulletSeed extends Projectile
     public BulletSeed(double angle)
     {
         super(angle);
+        setCurrentAnimation(ImageSheet("seed-bullet.png", 10));
     }
     
         
@@ -23,9 +24,5 @@ public class BulletSeed extends Projectile
         super.addedToWorld(world);
         // THIS LINE SETS THE LOCATION RELATIVE TO THE CURRENT CAMERA DONT CHANGE
         this.setLocation(getX(), getY());
-        setCurrentAnimation(null);
-        setCurrentAnimation(ImageSheet("seed-bullet.png", 10));
-        
     }
-    
 }

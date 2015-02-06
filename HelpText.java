@@ -8,14 +8,6 @@ import greenfoot.*;
  */
 public class HelpText extends VisibleActor
 {
-    public HelpText(String message)
-    {
-        getWorld().showText(message, getX(), getY());
-    }
-    
-    public void act() 
-    { }
-    
-    class HelpTextJump extends HelpText
+    class HelpTextJump extends LevelText
     { public HelpTextJump() { super("Press UP (or W or SPACE) to jump"); } }
 }
