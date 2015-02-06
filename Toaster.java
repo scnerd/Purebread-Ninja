@@ -39,7 +39,7 @@ public class Toaster extends Enemy
     public Sprite moving_floor = Sprite.ImageSheet("ToasterDaimyoWalkAttack.png", 8);
     
     @Animates(MOVING_AIR)
-    public Sprite moving_air = Sprite.ImageSheet("ToasterDaimyo.png", 8);
+    public Sprite moving_air = Sprite.ImageSheet("ToasterDaimyoJump.png", 8);
     
     @Animates(HURT)
     public Sprite hurt = Sprite.ImageSheet("ToasterDaimyo.png", 8);
@@ -51,6 +51,8 @@ public class Toaster extends Enemy
     {
         // VISION_RANGE = 250, PROXIMITY_RANGE = 100
         super(400, 100);
+        down_edge_distance = 50;
+        side_edge_distance = 50;
     }
     
     @Override
