@@ -11,10 +11,10 @@ import java.util.List;
 public class Enemy extends Character
 {
     
-    public static final Point2D.Double MAX_VELOCITY = new Point2D.Double(6, 6);
+    public static final Point2D.Double MAX_VELOCITY = new Point2D.Double(6, 10);
     private double ACC_GRAVITY = 0.25;
-    private int VISION_RANGE;
-    private int PROXIMITY_RANGE;
+    protected int VISION_RANGE;
+    protected int PROXIMITY_RANGE;
     
     protected boolean sawPlayer = false;
     protected boolean engagedPlayer = false;
@@ -140,8 +140,8 @@ public class Enemy extends Character
     
     protected boolean atLeftEdge()
     {
-        int left_distance = 20;
-        int down_distance = 20;
+        int left_distance = 30;
+        int down_distance = 30;
         
         if (getOneObjectAtOffset(-left_distance, 0, Platform.class) == null)
             return (getOneObjectAtOffset(-left_distance, down_distance, Platform.class) == null);
@@ -150,8 +150,8 @@ public class Enemy extends Character
     
     protected boolean atRightEdge()
     {
-        int right_distance = 20;
-        int down_distance = 20;
+        int right_distance = 30;
+        int down_distance = 30;
         
         if (getOneObjectAtOffset(right_distance, 0, Platform.class) == null)
                return (getOneObjectAtOffset(right_distance, down_distance, Platform.class) == null);

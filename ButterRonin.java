@@ -11,7 +11,7 @@ public class ButterRonin extends Enemy
     private int aggresive_wait_time = 100;
     private int wait_time = 0;
     private int next_direction = 1;
-    private double speed = 4.0;
+    private double speed = 2.5;
     
     private int cur_state = 0, prev_state = 0;
     private int DEFAULT_ENGAGED_DURATION = 500;
@@ -36,11 +36,6 @@ public class ButterRonin extends Enemy
     {
         // VISION_RANGE = 250, PROXIMITY_RANGE = 200
         super(250, 200);
-    }
-    public ButterRonin(boolean tutorial)
-    {
-        // VISION_RANGE = 0, PROXIMITY_RANGE = 0
-        super(0, 0);
     }
     
     @Override

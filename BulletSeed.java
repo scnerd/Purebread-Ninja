@@ -24,5 +24,8 @@ public class BulletSeed extends Projectile
         super.addedToWorld(world);
         // THIS LINE SETS THE LOCATION RELATIVE TO THE CURRENT CAMERA DONT CHANGE
         this.setLocation(getX(), getY());
+        setCurrentAnimation(null);
+        setCurrentAnimation(ImageSheet("JamFisherShot.png", 3));
+        
     }
 }
