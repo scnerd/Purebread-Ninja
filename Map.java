@@ -219,7 +219,7 @@ public class Map extends CameraViewableWorld
             w = new Menu();
         }
                     
-        for(int i = 1; i < 6; ++i)
+        for(int i = 5; i != 0; --i)
         {
             String screen = props.getProperty(String.format("out%d", i));
             if (screen != null)
