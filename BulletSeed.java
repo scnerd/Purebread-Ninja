@@ -25,7 +25,7 @@ public class BulletSeed extends Projectile
         // THIS LINE SETS THE LOCATION RELATIVE TO THE CURRENT CAMERA DONT CHANGE
         this.setLocation(getX(), getY());
         setCurrentAnimation(null);
-        setCurrentAnimation(ImageSheet("JamFisherShot.png", 3));
+        setCurrentAnimation(ImageSheet("JamFisherShot.png", 4));
         
     }
 }

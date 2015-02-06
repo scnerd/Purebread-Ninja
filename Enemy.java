@@ -19,6 +19,8 @@ public class Enemy extends Character
     protected boolean sawPlayer = false;
     protected boolean engagedPlayer = false;
     public boolean isDying = false;
+    protected int down_edge_distance = 30;
+    protected int side_edge_distance = 30;
     
     protected GreenfootSound deathSound = new GreenfootSound("sounds/death.wav");
     
@@ -140,21 +142,15 @@ public class Enemy extends Character
     
     protected boolean atLeftEdge()
     {
-        int left_distance = 30;
-        int down_distance = 30;
-        
-        if (getOneObjectAtOffset(-left_distance, 0, Platform.class) == null)
-            return (getOneObjectAtOffset(-left_distance, down_distance, Platform.class) == null);
+        if (getOneObjectAtOffset(-side_edge_distance, 0, Platform.class) == null)
+            return (getOneObjectAtOffset(-side_edge_distance, down_edge_distance, Platform.class) == null);
         return true;
     }
     
     protected boolean atRightEdge()
     {
-        int right_distance = 30;
-        int down_distance = 30;
-        
-        if (getOneObjectAtOffset(right_distance, 0, Platform.class) == null)
-               return (getOneObjectAtOffset(right_distance, down_distance, Platform.class) == null);
+        if (getOneObjectAtOffset(side_edge_distance, 0, Platform.class) == null)
+               return (getOneObjectAtOffset(side_edge_distance, down_edge_distance, Platform.class) == null);
         return true;
     }
     

@@ -33,24 +33,26 @@ public class Toaster extends Enemy
     
     @Animates(IDLE)
     @DefaultAnimation
-    public Sprite idle = Sprite.ImageSheet("wombat.png", 1);
+    public Sprite idle = Sprite.ImageSheet("ToasterDaimyo.png", 8);
     
     @Animates(MOVING_FLOOR)
-    public Sprite moving_floor = Sprite.ImageSheet("wombat.png", 1);
+    public Sprite moving_floor = Sprite.ImageSheet("ToasterDaimyoWalkAttack.png", 8);
     
     @Animates(MOVING_AIR)
-    public Sprite moving_air = Sprite.ImageSheet("wombat.png", 1);
+    public Sprite moving_air = Sprite.ImageSheet("ToasterDaimyoJump.png", 8);
     
     @Animates(HURT)
-    public Sprite hurt = Sprite.ImageSheet("wombat.png", 1);
+    public Sprite hurt = Sprite.ImageSheet("ToasterDaimyo.png", 8);
     
     @Animates(DYING)
-    public Sprite dying = Sprite.ImageSheet("wombat.png", 1);
+    public Sprite dying = Sprite.ImageSheet("ToasterDaimyo.png", 8);
     
     public Toaster()
     {
         // VISION_RANGE = 250, PROXIMITY_RANGE = 100
         super(400, 100);
+        down_edge_distance = 50;
+        side_edge_distance = 50;
     }
     
     @Override

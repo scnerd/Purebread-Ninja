@@ -22,7 +22,7 @@ public class JamFisher extends Enemy
     public Sprite attacking = Sprite.ImageSheet("JamFisherAttack.png", 3);
     
     @Animates(DYING)
-    public Sprite dying = Sprite.ImageSheet("JamFisherDeath.png", 11);
+    public Sprite dying = Sprite.ImageSheet("JamFisherDeath.png", 10);
     
     private GreenfootSound shootSound = new GreenfootSound("sounds/pew.wav");
     
