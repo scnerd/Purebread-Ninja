@@ -23,8 +23,8 @@ public class HealthDisplay extends VisibleActor
         if (world == null)
         {
             world = (CameraViewableWorld)getWorld();
-            x_offset = world.getWidth() / 2 - 40;
-            y_offset = world.getHeight() / 2 - 40;
+            x_offset = world.getWidth() / 2 - 60;
+            y_offset = world.getHeight() / 2 - 60;
         }
         int health = ((Player)getWorld().getObjects(Player.class).get(0)).health;
         if (old_health != health)
