@@ -39,7 +39,7 @@ public class Menu extends CameraViewableWorld
     {
         int x = this.getWidth()/2;
         int y = this.getHeight()/3;
-        addObject(new LevelText("Purebread Ninja", 100), x, y/2);
+        //addObject(new LevelText("Purebread Ninja", 100), x, y/2);
         addObject(new MenuNavButton("Start", new  Point2D.Double(levelMenuX, levelMenuY)), x, y*2);
         
     }
