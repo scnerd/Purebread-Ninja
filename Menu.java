@@ -24,6 +24,7 @@ public class Menu extends CameraViewableWorld
     public Menu()
     {
         super(800, 600);
+        this.setBackground("Title.png");
         int y = Greenfoot.getRandomNumber(2) == 0 ? -1 : 2;
         levelMenuX =  Greenfoot.getRandomNumber(2) == 0 ? getWidth()*3/2 : - getWidth()/2;
         
