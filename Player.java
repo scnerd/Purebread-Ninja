@@ -425,8 +425,8 @@ public class Player extends Character
     
     private HashSet lowerHeatTiles(HashSet toReturn)
     {
-        int leftX = -getImage().getWidth() / 2 + collisionMargin;
-        int rightX = getImage().getWidth() / 2 - collisionMargin;
+        int leftX = -getImage().getWidth() / 2 + burnerMargin;
+        int rightX = getImage().getWidth() / 2 - burnerMargin;
         int down = getImage().getHeight() / 2 + 1;
         toReturn.addAll(getObjectsAtOffset(leftX, down, HeatCoil.class));
         toReturn.addAll(getObjectsAtOffset(rightX, down, HeatCoil.class));
@@ -436,8 +436,8 @@ public class Player extends Character
     private HashSet rightHeatTile(HashSet toReturn)
     {
         int rightX = getImage().getWidth() / 2 + 1;
-        int downY = getImage().getHeight() / 2 - collisionMargin;
-        int upY = -getImage().getHeight() / 2 + collisionMargin;
+        int downY = getImage().getHeight() / 2 - burnerMargin;
+        int upY = -getImage().getHeight() / 2 + burnerMargin;
         toReturn.addAll(getObjectsAtOffset(rightX, downY, HeatCoil.class));
         toReturn.addAll(getObjectsAtOffset(rightX, upY, HeatCoil.class));
         return toReturn;
@@ -446,8 +446,8 @@ public class Player extends Character
     private HashSet leftHeatTile(HashSet toReturn)
     {
         int leftX = -getImage().getWidth() / 2 - 1;
-        int downY = getImage().getHeight() / 2 - collisionMargin;
-        int upY = -getImage().getHeight() / 2 + collisionMargin;
+        int downY = getImage().getHeight() / 2 - burnerMargin;
+        int upY = -getImage().getHeight() / 2 + burnerMargin;
         toReturn.addAll(getObjectsAtOffset(leftX, downY, HeatCoil.class));
         toReturn.addAll(getObjectsAtOffset(leftX, upY, HeatCoil.class));
         return toReturn;
@@ -456,8 +456,8 @@ public class Player extends Character
 
     private HashSet aboveHeatTile(HashSet toReturn)
     {
-        int leftX = -getImage().getWidth() / 2 + collisionMargin;
-        int rightX = getImage().getWidth() / 2 - collisionMargin;
+        int leftX = -getImage().getWidth() / 2 + burnerMargin;
+        int rightX = getImage().getWidth() / 2 - burnerMargin;
         int up = -getImage().getHeight() / 2 - 1;
         toReturn.addAll(getObjectsAtOffset(leftX, up, HeatCoil.class));
         toReturn.addAll(getObjectsAtOffset(rightX, up, HeatCoil.class));

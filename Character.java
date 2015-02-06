@@ -17,6 +17,7 @@ public abstract class Character extends AnimatedActor
     public static final int DEFAULT_COLLISION_MARGIN = 6;
     
     protected int collisionMargin = DEFAULT_COLLISION_MARGIN;
+    protected int burnerMargin = 12;
     protected Point2D.Double position = null;
     protected Point2D.Double velocity = new Point2D.Double(0, 0);
     protected CharacterAction currentAction = CharacterAction.IDLE;   
