@@ -17,20 +17,20 @@ public class ButterRonin extends Enemy
     private int DEFAULT_ENGAGED_DURATION = 500;
     private int engagedDuration = 0;
     private boolean inRange;
-    private int DEFAULT_DYING_TICKS = 40;
+    private int DEFAULT_DYING_TICKS = 39;
     private int dying_ticks = 0;
     
     @Animates(IDLE)
     @DefaultAnimation
-    public Sprite idle = Sprite.ImageSheet("chips-1.png", 1);
-    //public Sprite idle = Sprite.ImageSheet("butter_idle.png", 8);
+    //public Sprite idle = Sprite.ImageSheet("chips-1.png", 1);
+    public Sprite idle = Sprite.ImageSheet("images/ButterRoninIdle.png", 8);
 
     @Animates(MOVING_FLOOR)
-    public Sprite running = Sprite.ImageSheet("chips-1.png", 1);
-    //public Sprite running = Sprite.ImageSheet("butter_attack.png", 6);
+    //public Sprite running = Sprite.ImageSheet("chips-1.png", 1);
+    public Sprite running = Sprite.ImageSheet("images/ButterRoninWalk.png", 6);
     
     @Animates(DYING)
-    public Sprite dying = Sprite.ImageSheet("chips-1.png", 1);
+    public Sprite dying = Sprite.ImageSheet("images/ButterRoninDeath.png", 10);
     
     public ButterRonin()
     {
