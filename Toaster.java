@@ -45,12 +45,12 @@ public class Toaster extends Enemy
     public Sprite hurt = Sprite.ImageSheet("ToasterDaimyoHurt.png", 1);
     
     @Animates(DYING)
-    public Sprite dying = Sprite.ImageSheet("ToasterDaimyo.png", 8);
+    public Sprite dying = Sprite.ImageSheet("ToasterDaimyoHurt.png", 1);
     
     public Toaster()
     {
         // VISION_RANGE = 250, PROXIMITY_RANGE = 100
-        super(400, 100);
+        super(600, 100);
         down_edge_distance = 50;
         side_edge_distance = 50;
     }
@@ -251,7 +251,9 @@ public class Toaster extends Enemy
     protected boolean playerInRange()
     {
         List<Actor> players = getObjectsInRange(VISION_RANGE, Player.class);
-        return engagedPlayer = sawPlayer = true;
+        if (!players.isEmpty())
+            return engagedPlayer = sawPlayer = true;
+        return false;
     }
     
     private void releaseMinion()
