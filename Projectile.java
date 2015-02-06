@@ -19,6 +19,7 @@ public class Projectile extends AnimatedActor
     private static GreenfootImage deathImage = new GreenfootImage("images/boom.png");
     public Projectile(double theta)
     {
+        flipFrames = (theta >= Math.PI/2.0 && theta <= 3*Math.PI/2.0);
         velocity.x = BULLET_VELOCITY*Math.cos(theta);
         velocity.y = BULLET_VELOCITY*Math.sin(theta);
     }
