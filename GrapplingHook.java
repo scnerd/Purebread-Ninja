@@ -5,7 +5,7 @@ import java.awt.Point;
 public class GrapplingHook extends VisibleActor
 {
     Platform platform;
-    private double SPEED = 6;
+    private double SPEED = 9;
     private double ANGLE = 60;
     private Color COLOR = Color.BLACK;
     
