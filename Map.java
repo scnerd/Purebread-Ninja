@@ -208,23 +208,27 @@ public class Map extends CameraViewableWorld
     public World nextWorld()
     {
         String nextMap = props.getProperty("next.map");
+        World w;
         if (nextMap != null)
         {
             Properties nextInfo = loadNextWorldProps(nextMap);
-            World w = new Map(Resource.loadLevel(nextMap), nextInfo);
-            for(int i = 0; i < 6; ++i)
-            {
-                String screen = props.getProperty(String.format("out%d", i));
-                if (screen != null)
-                    w = new ScreenWorld("screen", w);
-                    
-            }
-            return w;
+            w = new Map(Resource.loadLevel(nextMap), nextInfo);
         }
         else
         {
-            return new Menu();
+            w = new Menu();
         }
+                    
+        for(int i = 1; i < 6; ++i)
+        {
+            String screen = props.getProperty(String.format("out%d", i));
+            if (screen != null)
+            {
+                w = new ScreenWorld(screen, w);
+            }
+                
+        }
+        return w;
     }
     
     private Properties loadNextWorldProps(String worldDir)
