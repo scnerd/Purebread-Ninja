@@ -1,5 +1,6 @@
 import greenfoot.*;
 import java.util.HashSet;
+import static purebreadninja.Sprite.*;
 
 /**
  * Write a description of class HeatCoil here.
@@ -9,12 +10,12 @@ import java.util.HashSet;
  */
 public class HeatCoil extends Platform
 {
-    public static final int DEFAULT_COLLISION_MARGIN = 6;
-    protected int collisionMargin = DEFAULT_COLLISION_MARGIN;
+    //public static final int DEFAULT_COLLISION_MARGIN = 6;
+    //protected int collisionMargin = DEFAULT_COLLISION_MARGIN;
     
     public HeatCoil()
     {
-        this.setImage("images/HeatCoil.png");
+        setCurrentAnimation(ImageSheet("images/HeatCoil.png", 40));
     }
     
     /**
@@ -23,6 +24,7 @@ public class HeatCoil extends Platform
      */
     public void act() 
     {
+        /*
         HashSet tiles = new HashSet();
         tiles.addAll(lowerTiles());
         tiles.addAll(rightTile());
@@ -33,8 +35,11 @@ public class HeatCoil extends Platform
             Player p = (Player) o;
             p.damage(this);
         }
+        */
+       super.act();
     }
     
+    /*
     private HashSet lowerTiles()
     {
         int leftX = -getImage().getWidth() / 2 + collisionMargin;
@@ -83,4 +88,5 @@ public class HeatCoil extends Platform
         toReturn.addAll(getObjectsAtOffset(rightX, up, Player.class));
         return toReturn;
     }
+    */
 }

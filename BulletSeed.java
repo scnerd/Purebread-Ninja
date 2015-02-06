@@ -14,6 +14,7 @@ public class BulletSeed extends Projectile
     public BulletSeed(double angle)
     {
         super(angle);
+        setCurrentAnimation(ImageSheet("seed-bullet.png", 10));
     }
     
         
@@ -27,5 +28,4 @@ public class BulletSeed extends Projectile
         setCurrentAnimation(ImageSheet("JamFisherShot.png", 3));
         
     }
-    
 }
