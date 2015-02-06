@@ -8,7 +8,7 @@ import greenfoot.*;
  */
 public class ScreenWorld extends World
 {
-    private World next;
+    protected World next;
     public ScreenWorld(String image, World next)
     {    
         super(800, 600, 1);
