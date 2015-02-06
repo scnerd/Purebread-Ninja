@@ -6,6 +6,7 @@ import java.lang.IllegalAccessException;
 import java.lang.IllegalArgumentException;
 import java.lang.reflect.InvocationTargetException;
 import java.awt.Point;
+import java.awt.Color;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
@@ -64,12 +65,14 @@ public class Map extends CameraViewableWorld
     
     private String mapData;
     private boolean introDone = false;
+    private boolean resuming = true;
+    private Actor filter;
     
     public Map(String data, Properties props)
     {
         super(800, 600);
         this.props = props;
-        this.setPaintOrder(HealthDisplay.class, Player.class, Character.class, Actor.class);
+        this.setPaintOrder(Map.Filter.class, HealthDisplay.class, Player.class, Character.class, Actor.class);
         loadLevel(data);
         this.mapData = data;
         String background = props.getProperty("background");
@@ -187,8 +190,17 @@ public class Map extends CameraViewableWorld
         if(!MUSIC_PLAYING)
         { BACKGROUND_MUSIC.playLoop(); MUSIC_PLAYING = true; }
         
-        if(Greenfoot.isKeyDown("escape"))
+        if(Greenfoot.isKeyDown("escape") && !resuming)
+        {
+            filterWorld(Color.BLACK, 128);
+            resuming = true;
             Greenfoot.setWorld(new PauseScreen("pause.png", this));
+        }
+        else if (!Greenfoot.isKeyDown("escape"))
+        {
+            removeFilter();
+            resuming = false;
+        }
             
     }
     
@@ -247,6 +259,30 @@ public class Map extends CameraViewableWorld
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+    
+    public void filterWorld(Color c, int amount)
+    {
+        filter = new Filter(getWidth(), getHeight(), c, amount);
+        addObject(filter, getWidth()/2, getHeight()/2);
+        repaint();
+        
+    }
+    
+    public void removeFilter()
+    {
+        removeObjects(getObjects(Map.Filter.class));
+    }
+    
+    static class Filter extends Actor {
+        public Filter(int width, int height, Color c, int amount)
+        {
+            GreenfootImage img = new GreenfootImage(width, height);
+            img.setColor(c);
+            img.fill();
+            img.setTransparency(amount);
+            this.setImage(img);
         }
     }
 }

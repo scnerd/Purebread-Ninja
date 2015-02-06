@@ -19,17 +19,13 @@ public abstract class TextButton extends VisibleActor
     
     public TextButton(String text)
     {
-        this.text = text;
-        this.x = x;
-        this.y = y;
-        
+        this.text = text; 
         createImage();
     }
     
     public TextButton()
     {
-        this.x = x;
-        this.y = y;
+
     }
     
     protected void createImage()

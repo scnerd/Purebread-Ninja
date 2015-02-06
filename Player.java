@@ -5,6 +5,7 @@ import static purebreadninja.Command.*;
 import static purebreadninja.Sprite.*;
 
 import java.awt.geom.Point2D;
+import java.awt.Color;
 import java.util.HashSet;
 
 
@@ -94,7 +95,9 @@ public class Player extends Character
             if (--health == 0)
             {
                 Map m = (Map)getWorld();
-                Greenfoot.setWorld(new ScreenWorld("images/game_over.png", m.reload()));
+                m.filterWorld(Color.RED, 64);
+                Greenfoot.setWorld(new DeathScreen(m.reload()));
+//                Greenfoot.setWorld(new ScreenWorld("images/pause.png", m.reload()));
             }
             isInvulnerable = true;
             hurtDisplayDuration = HURT_DISPLAY_DEFAULT;
