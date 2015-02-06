@@ -21,7 +21,7 @@ public abstract class Character extends AnimatedActor
     protected Point2D.Double velocity = new Point2D.Double(0, 0);
     protected CharacterAction currentAction = CharacterAction.IDLE;   
     private CharacterAction previousAction = CharacterAction.IDLE;
-    private SpriteAnimation[] animations = new SpriteAnimation[CharacterAction.values().length];
+    protected SpriteAnimation[] animations = new SpriteAnimation[CharacterAction.values().length];
     
     public Character()
     {
@@ -104,7 +104,7 @@ public abstract class Character extends AnimatedActor
     protected double stepX(double velocity)
     {
         int direction = velocity < 0 ? -1 : 1;
-        double front = position.x + direction * getImage().getWidth() / 2;
+        double front = position.x + direction * getImage().getWidth() / 2.0;
       
         int front_tile = Map.pointToGrid(front, position.y).x;
         int forward_limit = direction < 0 ?
@@ -143,7 +143,7 @@ public abstract class Character extends AnimatedActor
     protected double stepY(double velocity)
     {
         int direction = velocity < 0 ? -1 : 1;
-        double front = position.y + direction * getImage().getHeight() / 2;
+        double front = position.y + direction * getImage().getHeight() / 2.0;
         
         int front_tile = Map.pointToGrid(position.x, front).y;
         int forward_limit = direction < 0 ?

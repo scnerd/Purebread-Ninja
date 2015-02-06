@@ -138,7 +138,7 @@ public class Map extends CameraViewableWorld
     
     public World reload()
     {
-        return new Map(this.mapData);
+        return new Map(this.mapData, this.props);
     }
 
     private void startLevel()
