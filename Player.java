@@ -180,7 +180,7 @@ public class Player extends Character
         if(prevAction == MOVING_WALL && currentAction != MOVING_WALL)
         { slidingSound.stop(); }
         prevAction = currentAction;
-        
+        checkHeatTiles();
         super.act();
     }
     
@@ -408,7 +408,7 @@ public class Player extends Character
         }
     }
     
-        public void checkHeatTiles() 
+    public void checkHeatTiles() 
     {
         HashSet tiles = new HashSet();
         lowerHeatTiles(tiles);

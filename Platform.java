@@ -1,5 +1,6 @@
 import greenfoot.*;
 import java.awt.Point;
+import purebreadninja.Sprite;
 import static purebreadninja.Sprite.*;
 
 /**
@@ -10,9 +11,10 @@ import static purebreadninja.Sprite.*;
  */
 public class Platform extends AnimatedActor
 {
+    public static final Sprite sprite = ImageSheet("images/FloorTileSmall.png", 1);
     public Platform()
     {
-        setCurrentAnimation(ImageSheet("images/FloorTileSmall.png", 1));
+        setCurrentAnimation(sprite);
     }
     
     public void act()
