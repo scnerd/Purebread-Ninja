@@ -16,17 +16,19 @@ public class PaniniSumoPresser extends Enemy
     
     @Animates(IDLE)
     @DefaultAnimation
-    public Sprite idle = Sprite.ImageSheet("pumpkin.png", 1);
-    //public Sprite idle = Sprite.ImageSheet("PaniniSumo.png", 6);
+    //public Sprite idle = Sprite.ImageSheet("pumpkin.png", 1);
+    public Sprite idle = Sprite.ImageSheet("PaniniSumo.png", 6);
     
     @Animates(DYING)
-    public Sprite dying = Sprite.ImageSheet("pumpkin.png", 1);
-    //public Sprite dying = Sprite.ImageSheet("PaniniSumoDeath.png", 10);
+    //public Sprite dying = Sprite.ImageSheet("pumpkin.png", 1);
+    public Sprite dying = Sprite.ImageSheet("PaniniSumoDeath.png", 10);
     
     public PaniniSumoPresser()
     {
         // VISION_RANGE = 350, PROXIMITY_RANGE = 200
         super(350, 200);
+        down_edge_distance = 40;
+        side_edge_distance = 40;
     }
     
     @Override

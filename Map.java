@@ -53,6 +53,11 @@ public class Map extends CameraViewableWorld
         TYPE_MAPPING.put('f', HelpText.HelpTextGrapple.class);
         TYPE_MAPPING.put('g', HelpText.HelpTextWallJump.class);
         TYPE_MAPPING.put('h', HelpText.HelpTextNext.class);
+        TYPE_MAPPING.put('i', HelpText.HelpTextButter1.class);
+        TYPE_MAPPING.put('j', HelpText.HelpTextButter2.class);
+        TYPE_MAPPING.put('k', HelpText.HelpTextJam1.class);
+        TYPE_MAPPING.put('l', HelpText.HelpTextJam2.class);
+        TYPE_MAPPING.put('m', HelpText.HelpTextPanini1.class);
     }
 
     Properties props;
