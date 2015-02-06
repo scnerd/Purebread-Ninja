@@ -68,6 +68,7 @@ public class Map extends CameraViewableWorld
     {
         super(800, 600);
         this.props = props;
+        this.setPaintOrder(Player.class, Character.class, Actor.class);
         loadLevel(data);
         this.mapData = data;
     }
